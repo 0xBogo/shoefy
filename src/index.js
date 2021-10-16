@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
+import {createWeb3ReactRoot, Web3ReactProvider} from '@web3-react/core';
 
 // and bootstrap
 import 'bootstrap';
@@ -34,12 +35,18 @@ const overrideCss = css`
 	margin-left: 50%
 `;
 
+// import {getLibrary} from './utils/getLibrary';
+
+// const NetworkContextName = `${new Date().getTime()}-NETWORK`;
+// const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
+// <Web3ReactProvider getLibrary={getLibrary}>
+
 // initialize modals
 Modal.setAppElement('#root');
 // and render our app into the "root" element!
 ReactDOM.render(
 	<React.Suspense fallback={<ClipLoader color={"#FFFFFF"} css={overrideCss}/>}>
 		<Shell pages={pagesInNavigator} />
-	</React.Suspense>,
-    document.getElementById('root')
+	</React.Suspense>
+	,document.getElementById('root')
 );

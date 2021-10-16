@@ -75,7 +75,7 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 		const pages1 = pages.slice(0, 2);
 		const pages2 = pages.slice(3, 7);
 
-		console.log(pages2);
+		// console.log(pages2);
 
 		// pages.pop(); WIP
 

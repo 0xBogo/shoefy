@@ -4,6 +4,7 @@ import * as numeral from 'numeral';
 import { BaseComponent, ShellErrorHandler } from '../shellInterfaces';
 import { Wallet } from '../wallet';
 import { Shoefy } from '../contracts/shoefy';
+import { ShoefyStaking } from '../contracts/shoefystaking';
 import { WithTranslation, withTranslation, TFunction, Trans } from 'react-i18next';
 import { fadeInLeft, fadeInRight, pulse } from 'react-animations';
 import styled, { keyframes } from 'styled-components';
@@ -50,8 +51,9 @@ const PulseDiv = styled.div`
   animation: infinite 5s ${PulseAnimation};
 `;
 
-class Staking2Component extends BaseComponent<StakingProps & WithTranslation, StakingState> {
+const StakingAddress = "0x4f4E5ff85C939b502EdC5B57ea0FC99694ebB1B4";
 
+class Staking2Component extends BaseComponent<StakingProps & WithTranslation, StakingState> {
 	private _timeout: any = null;
 
 	constructor(props: StakingProps & WithTranslation) {
@@ -83,14 +85,17 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 		ShellErrorHandler.handle(error);
 	}
 
-	async confirmStake(): Promise<void> {
+	async confirmStake(step): Promise<void> {
 		try {
 			const state = this.readState();
+			const _staking2Contract = state.wallet.connectToContract(StakingAddress, require('../contracts/staking2.abi.json'));
+
 			this.updateState({ pending: true });
 
 			if (state.ctValueStake >= 0) {
 				console.log("ctVa:", state.ctValueStake);
-				await state.shoefy.stake(state.ctValueStake);
+				await state.shoefy.stake2(state.ctValueStake, step);
+				// await _staking2Contract.methods.stake(state.ctValueStake, step).send({'from': state.wallet.currentAddress});
 			}
 			else {
 				NotificationManager.warning("Can't stake a negative amount.");
@@ -402,8 +407,7 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 											<label className="form-label">{t('staking.stake.amount')}</label>
 											<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputStake} value={state.ctValueStake || 0} />
 											<div className="d-flex justify-content-center button-row">
-												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake()}>{t('staking.stake.title')}</button>
-												<button className="btn btn-complementary btn-md link-dark align-self-center stake-claim" disabled={state.pendingRewards <= 0} type="button" onClick={async () => this.confirmClaimRewards()}>{t('staking.stake.claim_rewards')}</button>
+												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(30)}>{t('staking.stake.title')}</button>
 											</div>
 										</form>
 									</div>
@@ -425,7 +429,6 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 											<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputUnstake} value={state.ctValueUnstake || 0} />
 											<div className="d-flex justify-content-center button-row">
 												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>{t('staking.unstake.title')}</button>
-												<button className="btn btn-complementary btn-md link-dark align-self-center stake-claim" disabled={state.pendingRewards <= 0} type="button" onClick={async () => this.confirmClaimRewards()}>{t('staking.stake.claim_rewards')}</button>
 											</div>
 										</form>
 									</div>
@@ -493,8 +496,7 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 											<label className="form-label">{t('staking.stake.amount')}</label>
 											<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputStake} value={state.ctValueStake || 0} />
 											<div className="d-flex justify-content-center button-row">
-												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake()}>{t('staking.stake.title')}</button>
-												<button className="btn btn-complementary btn-md link-dark align-self-center stake-claim" disabled={state.pendingRewards <= 0} type="button" onClick={async () => this.confirmClaimRewards()}>{t('staking.stake.claim_rewards')}</button>
+												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(60)}>{t('staking.stake.title')}</button>
 											</div>
 										</form>
 									</div>
@@ -516,7 +518,6 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 											<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputUnstake} value={state.ctValueUnstake || 0} />
 											<div className="d-flex justify-content-center button-row">
 												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>{t('staking.unstake.title')}</button>
-												<button className="btn btn-complementary btn-md link-dark align-self-center stake-claim" disabled={state.pendingRewards <= 0} type="button" onClick={async () => this.confirmClaimRewards()}>{t('staking.stake.claim_rewards')}</button>
 											</div>
 										</form>
 									</div>
@@ -584,8 +585,7 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 											<label className="form-label">{t('staking.stake.amount')}</label>
 											<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputStake} value={state.ctValueStake || 0} />
 											<div className="d-flex justify-content-center button-row">
-												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake()}>{t('staking.stake.title')}</button>
-												<button className="btn btn-complementary btn-md link-dark align-self-center stake-claim" disabled={state.pendingRewards <= 0} type="button" onClick={async () => this.confirmClaimRewards()}>{t('staking.stake.claim_rewards')}</button>
+												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(120)}>{t('staking.stake.title')}</button>
 											</div>
 										</form>
 									</div>
@@ -607,7 +607,6 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 											<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputUnstake} value={state.ctValueUnstake || 0} />
 											<div className="d-flex justify-content-center button-row">
 												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>{t('staking.unstake.title')}</button>
-												<button className="btn btn-complementary btn-md link-dark align-self-center stake-claim" disabled={state.pendingRewards <= 0} type="button" onClick={async () => this.confirmClaimRewards()}>{t('staking.stake.claim_rewards')}</button>
 											</div>
 										</form>
 									</div>
