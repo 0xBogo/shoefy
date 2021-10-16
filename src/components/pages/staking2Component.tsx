@@ -407,7 +407,7 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 											<label className="form-label">{t('staking.stake.amount')}</label>
 											<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputStake} value={state.ctValueStake || 0} />
 											<div className="d-flex justify-content-center button-row">
-												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(30)}>{t('staking.stake.title')}</button>
+												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(0)}>{t('staking.stake.title')}</button>
 											</div>
 										</form>
 									</div>
@@ -496,7 +496,7 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 											<label className="form-label">{t('staking.stake.amount')}</label>
 											<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputStake} value={state.ctValueStake || 0} />
 											<div className="d-flex justify-content-center button-row">
-												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(60)}>{t('staking.stake.title')}</button>
+												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(1)}>{t('staking.stake.title')}</button>
 											</div>
 										</form>
 									</div>
@@ -585,7 +585,7 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 											<label className="form-label">{t('staking.stake.amount')}</label>
 											<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputStake} value={state.ctValueStake || 0} />
 											<div className="d-flex justify-content-center button-row">
-												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(120)}>{t('staking.stake.title')}</button>
+												<button className="btn btn-primary btn-md link-dark align-self-center stake-confirm" disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(2)}>{t('staking.stake.title')}</button>
 											</div>
 										</form>
 									</div>
