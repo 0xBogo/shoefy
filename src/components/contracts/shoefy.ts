@@ -6,6 +6,7 @@ import * as web3 from 'web3-utils';
 export const ShoeFyAddress = "0xfBA067325d5F679D89f2933f4eA4c0158389455a";
 export const StakingAddress = "0xc959cDc50eEba53b9cD07637e50A706fd6a92031";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
+export const Staking2Address = "0x4f4E5ff85C939b502EdC5B57ea0FC99694ebB1B4";
 
 export class Shoefy {
 	private readonly _wallet: Wallet;
@@ -22,6 +23,9 @@ export class Shoefy {
 		this._wallet = wallet;
 		this._stakingContract = wallet.connectToContract(StakingAddress, require('./staking.abi.json'));
 		this._shoeFyContract =  wallet.connectToContract(ShoeFyAddress, require('./shoefy.abi.json'));
+		this._staking2Contract = wallet.connectToContract(Staking2Address, require('./staking2.abi.json'));
+
+		this.stake2 = this.stake2.bind(this);
 	}
 
 	get contract(): Contract {
@@ -42,6 +46,16 @@ export class Shoefy {
 	}
 	get apr(): number {
 		return this._apr;
+	}
+
+	async stake2(amount: number, stakestep: number): Promise<void> {
+		console.log(amount)
+		if (this._balance >= amount) {
+			await this._staking2Contract.methods.stake(amount, stakestep).send({'from': this._wallet.currentAddress});
+		}
+		else {
+			throw 'Your shoefy balance is not sufficient to stake this amount';
+		}
 	}
 
 	async stake(amount: number): Promise<void> {
@@ -75,6 +89,6 @@ export class Shoefy {
 		this._stake = await this._stakingContract.methods.stakedBalanceOf(this._wallet.currentAddress).call() / (10 ** 18);
 		this._pendingRewards = await this._stakingContract.methods.pendingRewards(this._wallet.currentAddress).call() / (10 ** 18);
 		this._apr = await this._stakingContract.methods.getCurrentAPR().call() / 100;
-		console.log('_apr', this._balance);
+		// console.log('_apr', this._balance);
 	}
 }
