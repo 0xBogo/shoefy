@@ -14,13 +14,13 @@ const Header = () => {
 
     return (
         <div className="i_header"> 
-            <div className="ih_left">
+            {/* <div className="ih_left">
                 <SearchIcon sx={{ fontSize: 15 }}/>
                 <span className="ih_text">Type of Cryptocurrency</span>
-            </div>
+            </div> */}
             <div className="ih_right">
-                <SettingsIcon  sx={{ fontSize: 15 }}/>
-                <NotificationsIcon className="ih_alert" sx={{ fontSize: 15 }}/>
+                {/* <SettingsIcon  sx={{ fontSize: 15 }}/>
+                <NotificationsIcon className="ih_alert" sx={{ fontSize: 15 }}/> */}
                 <img className="ih_img" src={Img} width="30" height="30"></img>
                 <span className="ih_rtext">Wallet Connected</span>
             </div>

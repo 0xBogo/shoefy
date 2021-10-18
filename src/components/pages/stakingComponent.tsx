@@ -26,6 +26,7 @@ export type StakingState = {
 	// actual set values
 	address?: string,
 	balance?: number,
+	balance_eth ?: number,
 	stakedBalance?: number,
 	pendingRewards?: number,
 	apr?: number,
@@ -90,7 +91,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 			this.updateState({ pending: true });
 
 			if (state.ctValueStake >= 0) {
-				console.log("ctVa:", state.ctValueStake);
+				//console.log("ctVa:", state.ctValueStake);
 				await state.shoefy.stake(state.ctValueStake);
 			}
 			else {
@@ -180,7 +181,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 					balance: shoefy.balance,
 					stakedBalance: shoefy.stakedBalance,
 					pendingRewards: shoefy.pendingStakeRewards,
-					apr: shoefy.apr
+					apr: shoefy.apr,
+					balance_eth: shoefy.balance_eth
 				});
 
 				if (resetCt) {
@@ -210,6 +212,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 			const wallet = new Wallet();
 			const result = await wallet.connect();
 
+
 			if (!result) {
 				throw 'The wallet connection was cancelled.';
 			}
@@ -217,6 +220,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 			const shoefy = new Shoefy(wallet);
 
 			this.updateState({ shoefy: shoefy, wallet: wallet, looping: true, pending: false });
+
 			this.updateOnce(true).then();
 
 			this.loop().then();
@@ -296,19 +300,19 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 	render() {
 		const state = this.readState();
 		const t: TFunction<"translation"> = this.readProps().t;
-
 		return <div className="staking-container">
 			<div className="i_header"> 
-				<div className="ih_left">
+				{/* <div className="ih_left">
 					<SearchIcon sx={{ fontSize: 15 }}/>
 					<span className="ih_text">Type of Cryptocurrency</span>
-				</div>
+				</div> */}
 				<div className="ih_right">
-					<SettingsIcon  sx={{ fontSize: 15 }}/>
-					<NotificationsIcon className="ih_alert" sx={{ fontSize: 15 }}/>
+					{/* <SettingsIcon  sx={{ fontSize: 15 }}/>
+					<NotificationsIcon className="ih_alert" sx={{ fontSize: 15 }}/> */}
 					{state.address ?
 						<div onClick={this.disconnectWallet} className="wallet-connect">
-							{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
+							{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" ></span>}
+							{state.balance_eth+' ETH'}
 							<img className="ih_img" src={FoxImg} width="30" height="30"></img>
 							<span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
 						</div>

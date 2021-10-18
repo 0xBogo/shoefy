@@ -29,6 +29,7 @@ export type StakingState = {
 	// actual set values
 	address?: string,
 	balance?: number,
+	balance_eth?: number,
 	stakedBalance?: number,
 	pendingRewards?: number,
 	userNFTs?: Array<any>,
@@ -177,7 +178,8 @@ class NFTStakingComponent extends BaseComponent<StakingProps & WithTranslation, 
 					userNFTs: nftStaking.userNFTs,
 					stakedNFTs: nftStaking.stakedNFTs,
 					pendingRewards: nftStaking.pendingStakeRewards,
-					apr: nftStaking.apr
+					apr: nftStaking.apr,
+					balance_eth: nftStaking.balance_eth,
 				});
 
 				if (resetCt) {
@@ -273,16 +275,17 @@ class NFTStakingComponent extends BaseComponent<StakingProps & WithTranslation, 
 		return <div className="staking-container">
 			
 			<div className="i_header"> 
-				<div className="ih_left">
+				{/* <div className="ih_left">
 					<SearchIcon sx={{ fontSize: 15 }}/>
 					<span className="ih_text">Type of Cryptocurrency</span>
-				</div>
+				</div> */}
 				<div className="ih_right">
-					<SettingsIcon  sx={{ fontSize: 15 }}/>
-					<NotificationsIcon className="ih_alert" sx={{ fontSize: 15 }}/>
+					{/* <SettingsIcon  sx={{ fontSize: 15 }}/>
+					<NotificationsIcon className="ih_alert" sx={{ fontSize: 15 }}/> */}
 					{state.address ?
 						<div onClick={this.disconnectWallet} className="wallet-connect">
 							{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
+							{state.balance_eth+ " ETH"}
 							<img className="ih_img" src={FoxImg} width="30" height="30"></img>
 							<span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
 						</div>
