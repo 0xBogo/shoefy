@@ -25,10 +25,10 @@ import './i18n';
 
 const pagesInNavigator = [
 	{ id: 'home', title: 'Home', component: Dashboard },
-	{ id: 'shoefyStaking', title: 'sNFT Staking', component: StakingComponent },
-	{ id: 'nftStaking', title: 'sNFT Farming', component: NFTStakingComponent},
-	{ id: 'snftStaking', title: '$Shoe Staking', component: NFTStakingComponent},
-	{ id: 'shoefyStaking2', title: 'Static $Shoe Staking', component: Staking2Component},
+	{ id: 'shoefyStaking', title: 'NFT Staking', component: StakingComponent },
+	{ id: 'snftStaking', title: 'Shoe Staking', component: NFTStakingComponent},
+	{ id: 'nftStaking', title: 'Farm', component: NFTStakingComponent},
+	{ id: 'shoefyStaking2', title: 'Booster NFTs', component: Staking2Component},
 ];
 
 const overrideCss = css`

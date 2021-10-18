@@ -10,16 +10,7 @@ function Footer() {
     return (
         <div className="i_footer"> 
             <div className="if_left">
-                <span className="ifl1">©</span>
-                <span className="ifl2">ShoeFy</span>
-                <span className="ifl1">All Rigjts Reserved</span>
-            </div>
-            <div className="if_right">
-                <FacebookIcon className="ifr_icon" sx={{ fontSize: 20}}/>
-                <PhotoCameraBackIcon className="ifr_icon" sx={{ fontSize: 20 }}/>
-                <TwitterIcon className="ifr_icon" sx={{ fontSize: 20 }}/>
-                <HelpOutlineIcon className="ifr_icon1" sx={{ fontSize: 20 }}/>
-                <span>Help Center</span>
+                <span className="ifl1">Copyright @2021 Shoefy Vesting Portal</span>
             </div>
         </div>
     );
