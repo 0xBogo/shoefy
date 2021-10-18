@@ -273,15 +273,14 @@ class NFTStakingComponent extends BaseComponent<StakingProps & WithTranslation, 
 		const t: TFunction<"translation"> = this.readProps().t;
 
 		return <div className="staking-container">
-			
-			<div className="i_header"> 
-				{/* <div className="ih_left">
+			{/*<div className="i_header"> 
+				<div className="ih_left">
 					<SearchIcon sx={{ fontSize: 15 }}/>
 					<span className="ih_text">Type of Cryptocurrency</span>
-				</div> */}
+				</div>
 				<div className="ih_right">
-					{/* <SettingsIcon  sx={{ fontSize: 15 }}/>
-					<NotificationsIcon className="ih_alert" sx={{ fontSize: 15 }}/> */}
+					<SettingsIcon  sx={{ fontSize: 15 }}/>
+					<NotificationsIcon className="ih_alert" sx={{ fontSize: 15 }}/>
 					{state.address ?
 						<div onClick={this.disconnectWallet} className="wallet-connect">
 							{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
@@ -297,7 +296,7 @@ class NFTStakingComponent extends BaseComponent<StakingProps & WithTranslation, 
 						</div>
 					}
 				</div>
-			</div>
+			</div>*/}
 			
 			<div className="container">
 				{/* <div className="row text-white staking-header ml-3">

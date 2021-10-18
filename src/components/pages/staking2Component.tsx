@@ -302,7 +302,7 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 		const t: TFunction<"translation"> = this.readProps().t;
 
 		return <div className="staking-container">
-			<div className="i_header"> 
+			{/*<div className="i_header"> 
 				<div className="ih_left">
 					<SearchIcon sx={{ fontSize: 15 }}/>
 					<span className="ih_text">Type of Cryptocurrency</span>
@@ -324,7 +324,7 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 						</div>
 					}
 				</div>
-			</div>
+			</div>*/}
 
 			<div className="container">
 				{/* <div className="row text-white staking-header ">

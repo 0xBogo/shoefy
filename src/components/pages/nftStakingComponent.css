@@ -14,6 +14,7 @@
 
 .i_header .wallet-connect{
 	cursor: pointer;
+	padding: 12px 14.5px;
 }
 
 .ih_left{
@@ -39,15 +40,6 @@
     flex: 1;
     justify-content: flex-end;
     align-items: center;
-}
-
-.ih_rtext{
-    font-family: 'Lato',sans-serif;
-    font-weight: bold;
-    color:#68768c;
-    font-size: 15px;
-    margin-right: 30px;
-    margin-left:10px;
 }
 
 .ih_img{
@@ -139,10 +131,10 @@
 	text-align: right;
 }
 
-.staking-container .staking-body>div {
+/*.staking-container .staking-body>div {
 	padding-top: 20px;
 	padding-bottom: 20px;
-}
+}*/
 
 .staking-container input::-webkit-outer-spin-button,
 .staking-container input::-webkit-inner-spin-button {
