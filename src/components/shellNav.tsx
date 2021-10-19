@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { NavLink, useLocation } from 'react-router-dom';
-import { BaseComponent, IShellPage } from './shellInterfaces';
+import { BaseComponent, IShellPage, ShellErrorHandler } from './shellInterfaces';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { TFunction, withTranslation, WithTranslation } from 'react-i18next';
@@ -113,6 +113,56 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 		}
 	}
 
+	private async loop(): Promise<void> {
+		const self = this;
+		const cont = await self.updateOnce.call(self);
+
+		if (cont) {
+			this._timeout = setTimeout(async () => await self.loop.call(self), 1000);
+		}
+	}
+	private async updateOnce(resetCt?: boolean): Promise<boolean> {
+		const shoefy = this.readState().shoefy;
+
+		if (!!shoefy) {
+			try {
+				await shoefy.refresh();
+				if (!this.readState().looping) {
+					return false;
+				}
+				this.updateState({
+					address: shoefy.wallet.currentAddress,
+					balance: shoefy.balance,
+					stakedBalance: shoefy.stakedBalance,
+					pendingRewards: shoefy.pendingStakeRewards,
+					apr: shoefy.apr
+				});
+
+				if (resetCt) {
+					this.updateState({
+						ctPercentageStake: 0,
+						ctValueStake: 0,
+						ctPercentageUnstake: 0,
+						ctValueUnstake: 0
+					})
+				}
+
+			}
+			catch (e) {
+				console.warn('Unable to update staking status', e);
+			}
+		}
+		else {
+			return false;
+		}
+
+		return true;
+	}
+
+	handleError(error) {
+		ShellErrorHandler.handle(error);
+	}
+
 	render() {
 		const pages: IShellPage[] = (this.readProps().pages || []);
 		const t: TFunction<"translation"> = this.readProps().t;
@@ -145,7 +195,6 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 							{state.address ?
 								<div onClick={this.disconnectWallet} className="wallet-connect">
 									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-									{state.balance_eth+ " ETH"}
 									<span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
 								</div>
 								:

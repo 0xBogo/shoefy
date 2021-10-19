@@ -64,6 +64,21 @@
 	border: 0px;
 }
 
+.maxValue {
+	background-color: #120059;
+	border-radius: 5px;
+	display: flex;
+	padding: 0 5px;
+}
+
+.max-btn {
+	width: 50px !important;
+    height: 30px;
+    border-radius: 15px;
+    background-color: #CF3279;
+    margin: auto 0;
+}
+
 .staking-container .staking-footer {
 	padding: 50px;
 }
