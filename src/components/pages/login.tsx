@@ -17,8 +17,14 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import FoxImg from '../../images/fox.png';
 import './login.css';
 
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import * as THREE from "three";
+
 import mark_circle from "../../images/mark_circle.png"
 import down from "../../images/down.png"
+
+import planetData from "./planetData";
 
 export type StakingProps = {};
 export type StakingState = {
@@ -54,6 +60,65 @@ const PulseAnimation = keyframes`${pulse}`;
 const PulseDiv = styled.div`
   animation: infinite 5s ${PulseAnimation};
 `;
+
+function Sun() {
+  return (
+    <mesh>
+      <sphereGeometry args={[2.5, 32, 32]} />
+      <meshStandardMaterial color="#E1DC59"  />
+    </mesh>
+  );
+}
+
+function Planet({ planet: { color, xRadius, zRadius, size } }) {
+  const planetRef = React.useRef();
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    const x = xRadius * Math.sin(t);
+    const z = zRadius * Math.cos(t);
+    planetRef.current.position.x = x;
+    planetRef.current.position.z = z;
+  });
+
+  return (
+    <>
+      <mesh ref={planetRef}>
+        <sphereGeometry args={[size, 32, 32]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+      <Ecliptic xRadius={xRadius} zRadius={zRadius} />
+    </>
+  );
+}
+
+function Lights() {
+  return (
+    <>
+      <ambientLight />
+      <pointLight position={[0, 0, 0]} />
+    </>
+  );
+}
+
+function Ecliptic({ xRadius = 1, zRadius = 1 }) {
+  const points = [];
+  for (let index = 0; index < 64; index++) {
+    const angle = (index / 64) * 2 * Math.PI;
+    const x = xRadius * Math.cos(angle);
+    const z = zRadius * Math.sin(angle);
+    points.push(new THREE.Vector3(x, 0, z));
+  }
+
+  points.push(points[0]);
+
+  const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
+  return (
+    <line geometry={lineGeometry}>
+      <lineBasicMaterial attach="material" color="#BFBBDA" linewidth={10} />
+    </line>
+  );
+}
 
 class Login extends BaseComponent<StakingProps & WithTranslation, StakingState> {
 
@@ -196,22 +261,46 @@ class Login extends BaseComponent<StakingProps & WithTranslation, StakingState> 
 		const t: TFunction<"translation"> = this.readProps().t;
 
 		return (<div className="staking-container">
-				<div className="row login-body mt-5">
-					{/*<img src="/images/image1.png" />*/}
-					<div className="main-content">
-						<h1>SHOEFY LEGENDARY</h1>
-						<p>Unleash the legendary SHOEFY that are being sealed.</p>
-						{state.address ?
-							<div onClick={this.disconnectWallet} className="wallet-connect">
-								{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-								<span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
-							</div>
-							:
-							<div onClick={this.connectWallet} className="wallet-connect">
-								{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-								<span className="ih_rtext">{t('staking.connect_wallet')}</span>
-							</div>
-						}
+				<div className="row login-body mt-1">
+					<div className="rotateimages">
+						<div className="sun">
+							<img src="/images/Image/PNG/Frame 1288.png" />
+						</div>
+						{/*<div className="saturn1">
+							<img src="/images/rotateitem1.png" />
+						</div>*/}
+						{/*<div className="saturn2">
+							<img src="/images/rotateitem1.png" />
+						</div>*/}
+						{/*<div className="saturn3">
+							<img src="/images/rotateitem1.png" />
+						</div>*/}
+						{/*<div className="saturn4">
+							<img src="/images/rotateitem1.png" />
+						</div>*/}
+						{/*<div className="saturn5">
+							<img src="/images/rotateitem1.png" />
+						</div>*/}
+						{/*<div className="saturn6">
+							<img src="/images/rotateitem1.png" />
+						</div>*/}
+					</div>
+					<div className="main">
+						<div className="main-content">
+							<h1>SHOEFY LEGENDARY</h1>
+							<p>Unleash the legendary SHOEFY that are being sealed.</p>
+							{state.address ?
+								<div onClick={this.disconnectWallet} className="wallet-connect">
+									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
+									<span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
+								</div>
+								:
+								<div onClick={this.connectWallet} className="wallet-connect">
+									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
+									<span className="ih_rtext">{t('staking.connect_wallet')}</span>
+								</div>
+							}
+						</div>
 					</div>
 				</div>
 			</div>)

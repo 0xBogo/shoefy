@@ -28,6 +28,9 @@ export class Shell extends BaseComponent<ShellProps, ShellState> {
 		super(props);
 	}
 
+	componentDidMount() {
+	}
+
 	render() {
 		const pages = this.readProps().pages;
 		return <Router>

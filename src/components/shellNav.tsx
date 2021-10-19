@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { TFunction, withTranslation, WithTranslation } from 'react-i18next';
 import { supportedLanguages, languageCodeOnly } from '../i18n';
-import Collapsible from 'react-collapsible';
 import './shellNav.css';
 import './shellNav.icons.css';
 import { Wallet } from './wallet';
@@ -38,6 +37,7 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 		super(props);
 
 		this.connectWallet = this.connectWallet.bind(this);
+		this.disconnectWallet = this.disconnectWallet.bind(this);
 	}
 
 	toggleMenu = (e) => {
