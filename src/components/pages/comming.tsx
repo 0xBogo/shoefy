@@ -102,7 +102,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                             <img src="images/star.png" />
                         </div>
                     </div>
-                    <div className="title">COMMING SOON</div>
+                    <div className="comingtitle">COMING SOON</div>
                     <div>
                     	<Countdown date={presaleTime} renderer={renderer} />
                     </div>
