@@ -14,7 +14,6 @@ export class ShellHost extends BaseComponent<ShellHostProps, ShellHostState> {
 	}
 
 	render() {
-		console.log(this.props)
 		const page: IShellPage = this.readProps().page || { id: null, title: null, component: null };
 		if (!page.component) {
 			return null;

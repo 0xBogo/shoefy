@@ -20,6 +20,8 @@ import Dashboard from './components/pages/dashboard/dashboard';
 import StakingComponent from './components/pages/stakingComponent';
 import Staking2Component from './components/pages/staking2Component';
 import NFTStakingComponent from './components/pages/nftStakingComponent';
+import Login from './components/pages/login';
+import Chart from './components/pages/chart';
 
 import './i18n';
 
@@ -29,6 +31,8 @@ const pagesInNavigator = [
 	{ id: 'snftStaking', title: 'Shoe Staking', component: NFTStakingComponent},
 	{ id: 'nftStaking', title: 'Farm', component: NFTStakingComponent},
 	{ id: 'shoefyStaking2', title: 'Booster NFTs', component: Staking2Component},
+	{ id: 'login', title: 'Login', component: Login},
+	{ id: 'chart', title: 'Chart', component: Chart},
 ];
 
 const overrideCss = css`

@@ -1,0 +1,31 @@
+.staking-container {
+	display: block;
+	padding: 5% 4% 0% 4%;
+}
+
+.main-content {
+	color: white;
+	text-align: center;
+}
+
+.main-content h1 {
+	font-size: 96px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 96px;
+	letter-spacing: -0.02em;
+}
+
+.main-content p {
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 40px;
+	letter-spacing: -0.02em;
+	margin-bottom: 39px;
+}
+
+.main-content .wallet-connect {
+	width: 232px;
+	margin: 0 auto;
+}
