@@ -3,166 +3,175 @@ import './dashboard.css';
 
 import GridViewIcon from '@mui/icons-material/GridView';
 
-import  graph_yellow from '../../../images/graph_yellow.png';
-import  graph_grape from '../../../images/graph_grape.png';
-import  graph_big from '../../../images/graph_big.png';
-import  back_yellow from '../../../images/back_yellow.png';
-import  back_pink from '../../../images/back_pink.png';
-import  back_blue from '../../../images/back_blue.png';
-import  back_gradient from '../../../images/back_gradient.png';
-import  shoes from '../../../images/shoes.png';
-import  dollar from '../../../images/dollar.png';
+import graph_yellow from '../../../images/graph_yellow.png';
+import graph_grape from '../../../images/graph_grape.png';
+import graph_big from '../../../images/graph_big.png';
+import back_yellow from '../../../images/back_yellow.png';
+import back_pink from '../../../images/back_pink.png';
+import back_blue from '../../../images/back_blue.png';
+import back_gradient from '../../../images/back_gradient.png';
+import shoes from '../../../images/shoes.png';
+import dollar from '../../../images/dollar.png';
 
-function Dashboard() {
-    return (
-        <div className="i_center">
-            <div className="ic_top">
-                <div className="t_up">
-                    <div className="tu_left">
-                        <div className="tul_text">  
-                        </div>
-                        <div className="tul_text">
-                            <div className="tul_up">
-                                Overview
-                            </div>
-                            <div className="tul_down">
-                                Data overview of your Cryptocurenncy account.
-                            </div>
-                        </div>
-                    </div>
-                    <div className="tu_right">
-                        <button className="tur_b1"><GridViewIcon sx={{ fontSize: 15 }} color="primary"/></button>
-                        <button className="tur_b2">{`<`}</button>
-                        <button className="tur_b3">{'>'}</button>
-                    </div>
-                </div>
-                <div className="t_center">
-                    <div className="tc_left">
-                        <div className="tcl_up">
-                            <div className="tclu_l">
-                                <img src={shoes} width="50px" height="50px"></img>
-                                <span className="tclu_text1">sNFT Price Chart</span>
-                            </div>
-                            <div className="tclu_r">
-                                <div className="tclur_text1">
-                                    $721,345
-                                </div>
-                                <div className="tclur_text2">
-                                    -4.68%   
-                                </div>
-                            </div>
-                        </div>
-                        <div className="tcl_down">
-                             <img src={graph_yellow} width="95%" height="80%"></img>
-                        </div>
-                    </div>
-                    <div className="tc_right">
-                        <div className="tcr_up">
-                            <div className="tcru_l">
-                                <img src={dollar} width="25px" height="45px"></img>
-                                <span className="tcru_text1">$Shoe Token Price Chart</span>
-                            </div>
-                            <div className="tcru_r">
-                                <div className="tcrur_text1">
-                                    $0.71
-                                </div>
-                                <div className="tcrur_text2">
-                                    0.48%   
-                                </div>
-                            </div>
-                        </div>
-                        <div className="tcr_down">
-                            <img src={graph_grape} width="95%" height="80%"></img>
-                        </div>
-                    </div>
-                </div>
-                <div className="t_down">
-                    <div className="td_u">
-                        sNFT Staking
-                    </div>
-                    <div className="td_d">
-                        <div className="td_rect1">
-                            {/* <img src={back_yellow} width="100%" height="100%">
-                            </img> */}
-                            STAKE sNFTs
-                        </div>
-                        <div className="td_rect2">
-                            HARVEST REWARDS
-                            {/* <img src={back_pink} width="100%" height="100%"></img> */}
-                        </div>
-                        <div className="td_rect3">
-                            UNSTAKE sNFT
-                            {/* <img src={back_blue} width="100%" height="100%"></img> */}
-                        </div>
-                        <div className="td_rect4">
-                            + APPLY bNFT BOOSTER
-                            {/* <img src={back_gradient} width="100%" height="100%"></img> */}
-                        </div>
+import { BaseComponent, IShellPage, ShellErrorHandler } from '../../shellInterfaces';
+import { Wallet } from '../../wallet';
+import { Shoefy } from '../../contracts/shoefy';
+import { TFunction, withTranslation, WithTranslation } from 'react-i18next';
+
+export type DashboardProps = {
+    pages: IShellPage[];
+};
+export type DashboardState = {
+    currentPage?: IShellPage;
+    wallet?: Wallet,
+    shoefy?: Shoefy,
+    address?: string,
+};
+
+class Dashboard extends BaseComponent<DashboardProps & WithTranslation, DashboardState> {
+
+    constructor(props: DashboardProps) {
+        super(props);
+
+        this.connectWallet = this.connectWallet.bind(this);
+        this.disconnectWallet = this.disconnectWallet.bind(this);
+    }
+
+    async connectWallet() {
+        try {
+            this.updateState({ pending: true });
+            const wallet = new Wallet();
+            const result = await wallet.connect();
+
+            if (!result) {
+                throw 'The wallet connection was cancelled.';
+            }
+
+            const shoefy = new Shoefy(wallet);
+
+            this.updateState({ shoefy: shoefy, wallet: wallet, looping: true, pending: false });
+            this.updateOnce(true).then();
+
+            this.loop().then();
+        }
+        catch (e) {
+            this.updateState({ pending: false });
+            this.handleError(e);
+        }
+    }
+
+    async disconnectWallet() {
+        try {
+            this.updateState({ pending: true });
+            const result = await this.state.wallet.disconnect();
+            if (result) {
+                throw 'The wallet connection was cancelled.';
+            }
+
+            this.updateState({ nftStaking: null, wallet: null, address: null, looping: false, pending: false });
+        }
+        catch (e) {
+            this.updateState({ pending: false });
+            this.handleError(e);
+        }
+    }
+
+    private async loop(): Promise<void> {
+        const self = this;
+        const cont = await self.updateOnce.call(self);
+
+        if (cont) {
+            this._timeout = setTimeout(async () => await self.loop.call(self), 1000);
+        }
+    }
+    private async updateOnce(resetCt?: boolean): Promise<boolean> {
+        const shoefy = this.readState().shoefy;
+
+        if (!!shoefy) {
+            try {
+                await shoefy.refresh();
+                if (!this.readState().looping) {
+                    return false;
+                }
+                this.updateState({
+                    address: shoefy.wallet.currentAddress,
+                    balance: shoefy.balance,
+                    stakedBalance: shoefy.stakedBalance,
+                    pendingRewards: shoefy.pendingStakeRewards,
+                    apr: shoefy.apr
+                });
+
+                if (resetCt) {
+                    this.updateState({
+                        ctPercentageStake: 0,
+                        ctValueStake: 0,
+                        ctPercentageUnstake: 0,
+                        ctValueUnstake: 0
+                    })
+                }
+
+            }
+            catch (e) {
+                console.warn('Unable to update staking status', e);
+            }
+        }
+        else {
+            return false;
+        }
+
+        return true;
+    }
+
+    render() {
+        const imgs = ["images/NFT-1.png", "images/NFT-2.png", "images/NFT-3.png", "images/NFT-4.png", "images/NFT-5.png", "images/NFT-6.png", "images/NFT-7.png"]
+
+        const t: TFunction<"translation"> = this.readProps().t;
+        const state = this.readState();
+
+        return (
+            <div>
+                <div className="back">
+                    <div className="main">
+                        {
+                            imgs.map((data, i) => {
+                                let v = 360 / 7 * i;
+                                let t = "translate(-50%, -50%) rotateY(" + v + "deg)" + " translateZ(350px) " + "rotateY(" + -v + "deg)" + " rotateX(20deg)";
+                                return (
+                                    <div key={i} style={{ width: "120px", position: "absolute", top: "40px", left: "-60px" }}>
+                                        <img src={data} style={{ width: "100%" }} />
+                                        <div className="star1">
+                                            <img src="images/star.png" />
+                                        </div>
+                                        <div className="star2">
+                                            <img src="images/star.png" />
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        }<img src="images/main.png" style={{ position: "absolute", left: "50%", top: "0px", transform: "translate(-50% , 0%)", width: "650px" }} />
                     </div>
                     
                 </div>
-            </div>
-            <div className="ic_bottom">
-                <div className="icb_up">
-                    <div className="icb1">
-                        <div className="icb1_l">
-                            sNFT STAKING APY
-                        </div>
-                        <div className="icb1_r">
-                            <span className="icb1_text">Year</span>
-                            <span className="icb1_text">Month</span>
-                            <span className="icb1_text">Week</span>
-                            <span className="icb1_text">Day</span>
-                        </div>
-                    </div>
-                    <div className="icb2">
-                        <div className="icb2_l">
-                            200%
-                        </div>
-                        <div className="icb2_r"></div>
-                    </div>
-                    <div className="icb3">
-                        <div className="icb3_l">
-                                150%
-                        </div>
-                        <div className="icb3_r"></div>
-                    </div>
-                    <div className="icb4">
-                        <div className="icb4_l">
-                                100%
-                        </div>
-                        <div className="icb4_r"></div>
-                    </div>
-                    
-                    <div className="icb5">
-                        <div className="icb5_l">
-                            50%
-                        </div>
-                        <div className="icb5_r"></div>
-                    </div>
-                    <div className="icb6">
-                        <div className="icb6_l">
-                                0%
+                <div style={{ position: "relative" }}>
+                    <div className="title">SHOEFY LEGENDARY</div>
+                    <div className="smalltext">Unleash the legendary SHOEFY that are being sealed.</div>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                        {state.address ?
+                            <div onClick={this.disconnectWallet} className="wallet-connect1">
+                                {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
+                                <span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
                             </div>
-                        <div className="icb6_r"></div>
-                    </div>
-                    <div className="icb7">
-                        <span className="icb7_text">01:00AM</span>
-                        <span className="icb7_text">02:00AM</span>
-                        <span className="icb7_text">03:00AM</span>
-                        <span className="icb7_text">04:00AM</span>
-                        <span className="icb7_text">05:00AM</span>
-                        <span className="icb7_text">06:00AM</span>
-                        <span className="icb7_text">07:00AM</span>
-                        <span className="icb7_text">08:00AM</span>
-                        <span className="icb7_text">09:00AM</span>
-                        <span className="icb7_text">10:00AM</span>
+                            :
+                            <div onClick={this.connectWallet} className="wallet-connect1">
+                                {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
+                                <span className="ih_rtext">{t('staking.connect_wallet')}</span>
+                            </div>
+                        }
                     </div>
                 </div>
-                <div className="icb_down"></div>
             </div>
-        </div>
-    );
+        );
+    }
 }
 
-export default Dashboard;
+export default withTranslation()(Dashboard);

@@ -98,6 +98,9 @@ class ChartPage extends BaseComponent<StakingProps & WithTranslation, StakingSta
 		                type: 'datetime',
 		                categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T00:30:00.000Z", "2018-09-19T01:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:00:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:00:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:00:00.000Z", "2018-09-19T04:30:00.000Z"]
 	              	},
+	              	yaxis: {
+		                categories: ['10.00k', '11.00k', '12.00k', '13.00k', '14.00k', '15.00k', '16.00k']
+	              	},
 	              	tooltip: {
 		                x: {
 		                  	format: 'dd/MM/yy HH:mm'
@@ -230,6 +233,8 @@ class ChartPage extends BaseComponent<StakingProps & WithTranslation, StakingSta
 
 		const state = this.readState();
 		const t: TFunction<"translation"> = this.readProps().t;
+
+
 
 		return (<div className="staking-container">
 				<div className="row chart-body mt-1">

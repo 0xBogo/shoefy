@@ -3,6 +3,10 @@
 	padding: 5% 4% 0% 4%;
 }
 
+.main {
+	margin-top: 50px
+}
+
 .main-content {
 	color: white;
 	text-align: center;
@@ -14,6 +18,7 @@
 	font-weight: 700;
 	line-height: 96px;
 	letter-spacing: -0.02em;
+	margin-bottom: 50px
 }
 
 .main-content p {
@@ -28,4 +33,33 @@
 .main-content .wallet-connect {
 	width: 232px;
 	margin: 0 auto;
+}
+
+.rotateimages {
+	position: relative;
+    height: 400px;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.rotateimages div {
+	position: absolute;
+    left: calc(50% - 50px);
+    top: calc(50% - 50px);
+}
+
+.rotateimages img {
+	width: 100px;
+    height: 100px;
+}
+
+.rotateimages .sun {
+	position: absolute;
+    left: calc(50% - 300px);
+    top: calc(50% - 180px);
+}
+
+.sun img {
+	width: 600px;
+    height: 360px;
 }

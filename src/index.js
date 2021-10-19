@@ -31,7 +31,6 @@ const pagesInNavigator = [
 	{ id: 'snftStaking', title: 'Shoe Staking', component: NFTStakingComponent},
 	{ id: 'nftStaking', title: 'Farm', component: NFTStakingComponent},
 	{ id: 'shoefyStaking2', title: 'Booster NFTs', component: Staking2Component},
-	{ id: 'login', title: 'Login', component: Login},
 	{ id: 'chart', title: 'Chart', component: Chart},
 ];
 

@@ -12,28 +12,22 @@ export class Wallet {
 		cacheProvider: false,
 		providerOptions: this.getProviderOptions()
 	});
+
 	private _web3: Web3 = null;
 
 	public getProviderOptions(): any {
 		const providerOptions = {
+			// Example with injected providers
+		  	// injected: {
+		   //  	display: {
+		   //    		logo: "data:image/gif;base64,INSERT_BASE64_STRING",
+		   //    		name: "Injected",
+		   //    		description: "Connect with the provider in your Browser"
+		   //  	},
+		   //  	package: null
+		  	// },
 			walletconnect: {
 				package: WalletConnectProvider,
-				// options: {
-				// 	rpc: {
-				// 		56: 'https://bsc-dataseed.binance.org/'
-				// 	},
-				// 	network: 'binance',
-				// 	chainId: 56,
-				// 	infuraId: 'TR4KMIQ72NEDFNJ2ZP5C1BGGTD6DSTTGGT'
-				// }
-				// options: {
-				// 	rpc: {
-				// 		97: 'https://data-seed-prebsc-1-s1.binance.org:8545/'
-				// 	},
-				// 	network: 'binance',
-				// 	chainId: 97,
-				// 	infuraId: 'TR4KMIQ72NEDFNJ2ZP5C1BGGTD6DSTTGGT '
-				// }
 				options: {
 					rpc: {
 						// 4: 'https://rinkeby-light.eth.linkpool.io/',
@@ -50,6 +44,39 @@ export class Wallet {
 	};
 
 	public async connect(): Promise<boolean> {
+		let modaldom = document.getElementsByClassName('web3modal-modal-card')
+		let carditemdom = document.getElementsByClassName('web3modal-provider-wrapper')
+
+		let temptitledom = document.getElementById('titledom')
+		let tempcontentdom1 = document.getElementById('contentdom1')
+		let tempcontentdom2 = document.getElementById('contentdom2')
+
+		if(temptitledom) {
+			temptitledom.remove()
+			tempcontentdom1.remove()
+			tempcontentdom2.remove()
+		}
+
+		var titledom = document.createElement("h3");
+		var contentdom1 = document.createElement("p");
+		var contentdom2 = document.createElement("p");
+
+		var textnode = document.createTextNode("Connect Wallet");
+		titledom.appendChild(textnode);
+		titledom.setAttribute("id", "titledom");
+
+		textnode = document.createTextNode("Please connect your wallet to continue.");
+		contentdom1.appendChild(textnode);
+		contentdom1.setAttribute("id", "contentdom1");
+
+		textnode = document.createTextNode("The system supports the following wallets");
+		contentdom2.appendChild(textnode);
+		contentdom2.setAttribute("id", "contentdom2");
+
+		modaldom[0].insertBefore(titledom, carditemdom[0]);
+		modaldom[0].insertBefore(contentdom1, carditemdom[0]);
+		modaldom[0].insertBefore(contentdom2, carditemdom[0]);
+
 		const wnd: any = window;
 		if ((window.ethereum || {}).selectedAddress) {
 			try {
@@ -92,19 +119,20 @@ export class Wallet {
 					rpcUrls: ['https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
 					blockExplorerUrls: ['https://bscscan.com/'],
 				}]
-				await ethereum.request({ method: 'wallet_addEthereumChain', params: networkinfo }).catch(function () { throw 'Please choose the Rinkeby network as the current network in your wallet app !' })
+
+				await ethereum.request({ method: 'wallet_addEthereumChain', params: networkinfo }).catch(function () {
+					document.getElementById('modalswitch').click();
+					throw 'Please choose the Rinkeby network as the current network in your wallet app !'
+				})
 			}
 			else {
+				document.getElementById('modalswitch').click();
 				throw 'Please choose the Rinkeby network as the current network in your wallet app !';
 			}
 		}
 
 		this._address = selectedAccount;
 		return this.isConnected;
-		// }
-		// else {
-		// 	// throw 'No compatible wallet app was found. Please install a supported browser extension, such as Metamask.';
-		// }
 	}
 
 	public async disconnect(): Promise<boolean> {
