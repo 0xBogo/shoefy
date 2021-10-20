@@ -136,19 +136,18 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                             })
                         }<img src="images/main.png" style={{ position: "absolute", left: "50%", top: "0px", transform: "translate(-50% , 0%)", width: "650px" }} />
                     </div>
-
+                    
                 </div>
                 <div style={{ position: "relative" }}>
                     <div className="title">SHOEFY LEGENDARY</div>
                     <div className="smalltext">Unleash the legendary SHOEFY that are being sealed.</div>
                     <div style={{ display: "flex", justifyContent: "center" }}>
-                        {state.address &&
+                        {state.address ?
                             <div onClick={this.disconnectWallet} className="wallet-connect1">
                                 {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
                                 <span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
                             </div>
-                        }
-                        {!state.address &&
+                            :
                             <div onClick={this.connectWallet} className="wallet-connect1">
                                 {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
                                 <span className="ih_rtext">{t('staking.connect_wallet')}</span>
