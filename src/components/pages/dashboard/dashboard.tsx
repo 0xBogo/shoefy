@@ -1,18 +1,6 @@
 import React from 'react';
 import './dashboard.css';
 
-import GridViewIcon from '@mui/icons-material/GridView';
-
-import graph_yellow from '../../../images/graph_yellow.png';
-import graph_grape from '../../../images/graph_grape.png';
-import graph_big from '../../../images/graph_big.png';
-import back_yellow from '../../../images/back_yellow.png';
-import back_pink from '../../../images/back_pink.png';
-import back_blue from '../../../images/back_blue.png';
-import back_gradient from '../../../images/back_gradient.png';
-import shoes from '../../../images/shoes.png';
-import dollar from '../../../images/dollar.png';
-
 import { BaseComponent, IShellPage, ShellErrorHandler } from '../../shellInterfaces';
 import { Wallet } from '../../wallet';
 import { Shoefy } from '../../contracts/shoefy';
@@ -134,8 +122,6 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                     <div className="main">
                         {
                             imgs.map((data, i) => {
-                                let v = 360 / 7 * i;
-                                let t = "translate(-50%, -50%) rotateY(" + v + "deg)" + " translateZ(350px) " + "rotateY(" + -v + "deg)" + " rotateX(20deg)";
                                 return (
                                     <div key={i} style={{ width: "120px", position: "absolute", top: "40px", left: "-60px" }}>
                                         <img src={data} style={{ width: "100%" }} />
@@ -150,18 +136,19 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                             })
                         }<img src="images/main.png" style={{ position: "absolute", left: "50%", top: "0px", transform: "translate(-50% , 0%)", width: "650px" }} />
                     </div>
-                    
+
                 </div>
                 <div style={{ position: "relative" }}>
                     <div className="title">SHOEFY LEGENDARY</div>
                     <div className="smalltext">Unleash the legendary SHOEFY that are being sealed.</div>
                     <div style={{ display: "flex", justifyContent: "center" }}>
-                        {state.address ?
+                        {state.address &&
                             <div onClick={this.disconnectWallet} className="wallet-connect1">
                                 {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
                                 <span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
                             </div>
-                            :
+                        }
+                        {!state.address &&
                             <div onClick={this.connectWallet} className="wallet-connect1">
                                 {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
                                 <span className="ih_rtext">{t('staking.connect_wallet')}</span>
