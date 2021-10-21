@@ -39,7 +39,9 @@ export type StakingState = {
 	ctValueStake?: number,
 	ctPercentageUnstake?: number,
 	ctValueUnstake?: number,
-	pending?: boolean
+	pending?: boolean,
+
+	approveFlag: boolean
 };
 
 const FadeInLeftAnimation = keyframes`${fadeInLeft}`;
@@ -68,7 +70,9 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		this.handleInputUnstake = this.handleInputUnstake.bind(this);
 		this.connectWallet = this.connectWallet.bind(this);
 		this.disconnectWallet = this.disconnectWallet.bind(this);
-		this.state = {};
+		this.state = {
+			approveFlag: false
+		};
 	}
 
 	handleStakeSlider(event) {
@@ -92,14 +96,12 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		if(step) {
 			try {
 				const state = this.readState();
-				const _staking2Contract = state.wallet.connectToContract(StakingAddress, require('../contracts/staking2.abi.json'));
 
 				this.updateState({ pending: true });
 
 				if (state.ctValueStake >= 0) {
 					console.log("ctVa:", state.ctValueStake);
 					await state.shoefy.stake2(state.ctValueStake, step);
-					// await _staking2Contract.methods.stake(state.ctValueStake, step).send({'from': state.wallet.currentAddress});
 				}
 				else {
 					NotificationManager.warning("Can't stake a negative amount.");
@@ -142,7 +144,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 			const state = this.readState();
 			this.updateState({ pending: true });
 
-			if (state.ctValueUnstake >= 0) {
+			if (Number(state.ctValueUnstake) >= 0) {
 				await state.shoefy.unstakeAndClaim(state.ctValueUnstake);
 			}
 			else {
@@ -159,14 +161,14 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		}
 	}
 
-	async confirmClaimRewards(): Promise<void> {
+	async confirmApprove(): Promise<void> {
 		try {
 			const state = this.readState();
 			this.updateState({ pending: true });
 
-			await state.shoefy.claim();
+			let flag = await state.shoefy.approve2(state.ctValueUnstake);
 
-			this.updateState({ pending: false });
+			this.updateState({ pending: false, approveFlag: flag.status });
 			this.updateOnce(true).then();
 		}
 		catch (e) {
@@ -316,13 +318,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 	}
 
 	setUnstakeValue(value) {
-		const r = this.readState().shoefy;
-		if (!r) return;
-
-		const t = r.stakedBalance;
-		const v = Math.max(0, Math.min(+(value || 0), r.stakedBalance));
+		const v = Math.max(0, value).toString();
 		this.updateState({
-			ctPercentageUnstake: Math.floor(100 * v / t),
 			ctValueUnstake: v,
 		});
 	}
@@ -333,7 +330,6 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		else{
 			this.setState({['flag'+index]:false});
 		}
-		console.log(index)
 		// alert(this.state.flag)
 	}
 
@@ -352,51 +348,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 		const accountEllipsis = state.address ? `${state.address.substring(0, 4)}...${state.address.substring(state.address.length - 4)}` : '___';
 		return <div className="staking-container">
-			{/*<div className="i_header"> 
-				<div className="ih_left">
-					<SearchIcon sx={{ fontSize: 15 }}/>
-					<span className="ih_text">Type of Cryptocurrency</span>
-				</div>
-				<div className="ih_right">
-					<SettingsIcon  sx={{ fontSize: 15 }}/>
-					<NotificationsIcon className="ih_alert" sx={{ fontSize: 15 }}/>
-					{state.address ?
-						<div onClick={this.disconnectWallet} className="wallet-connect">
-							{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" ></span>}
-							{state.balance_eth+' ETH'}
-							<img className="ih_img" src={FoxImg} width="30" height="30"></img>
-							<span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
-						</div>
-						:
-						<div onClick={this.connectWallet} className="wallet-connect">
-							{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-							<img className="ih_img" src={FoxImg} width="30" height="30"></img>
-							<span className="ih_rtext">{t('staking.connect_wallet')}</span>
-						</div>
-					}
-				</div>
-			</div>*/}
-
 			<div className="container">
-				{/* <div className="row text-white staking-header ">
-					<div className="col-md-12">
-						<div className="staking-title">
-							<span>ShoeFy</span>
-							<span style={{ color: "#abd9ea" }}>Staking</span>
-							{state.address ?
-								(<a className="shadow btn btn-primary ladda-button btn-md btn-wallet float-right" role="button" onClick={this.disconnectWallet}>
-									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"> </span>}
-									{t('staking.disconnect_wallet')}
-								</a>)
-								:
-								(<a className="shadow btn btn-primary ladda-button btn-md btn-wallet float-right" role="button" onClick={this.connectWallet}>
-									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"> </span>}
-									{t('staking.connect_wallet')}
-								</a>)
-							}
-						</div>
-					</div>
-				</div> */}
 				<div className="row staking-body mt-5">
 					<FadeInLeftDiv className="col-md-12 d-flex">
 						<div className="shadow d-flex flex-column flex-fill gradient-card primary user-info">
@@ -496,7 +448,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 															<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(100)} type="button">MAX</button>
 														</div>
 														<div className="d-flex justify-content-center button-row margin_top">
-															<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake()}>Approve</button>
+															{
+																this.state.approveFlag ?
+																	<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake()}>Stake</button> :
+																	<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmApprove()}>Approve</button>
+															}
 														</div>
 													</form>
 												</div>
@@ -514,7 +470,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 														<label className="form-label">Total Rewards</label>
 														<h1 className="form-label total-amount">0.00</h1>
 														<div className="d-flex justify-content-center button-row margin_top">
-															<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>
+															{/*<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>*/}
 														</div>
 													</form>
 												</div>
@@ -568,7 +524,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 															<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(100)} type="button">MAX</button>
 														</div>
 														<div className="d-flex justify-content-center button-row margin_top">
-															<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(0)}>Approve</button>
+															{
+																this.state.approveFlag ?
+																	<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(0)}>Stake</button> :
+																	<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmApprove()}>Approve</button>
+															}
 														</div>
 													</form>
 												</div>
@@ -586,7 +546,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 														<label className="form-label">Total Rewards</label>
 														<h1 className="form-label total-amount">0.00</h1>
 														<div className="d-flex justify-content-center button-row margin_top">
-															<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>
+															{/*<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>*/}
 														</div>
 													</form>
 												</div>
@@ -640,7 +600,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 															<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(100)} type="button">MAX</button>
 														</div>
 														<div className="d-flex justify-content-center button-row margin_top">
-															<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(1)}>Approve</button>
+															{
+																this.state.approveFlag ?
+																	<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(1)}>Stake</button> :
+																	<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmApprove()}>Approve</button>
+															}
 														</div>
 													</form>
 												</div>
@@ -658,7 +622,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 														<label className="form-label">Total Rewards</label>
 														<h1 className="form-label total-amount">0.00</h1>
 														<div className="d-flex justify-content-center button-row margin_top">
-															<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>
+															{/*<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>*/}
 														</div>
 													</form>
 												</div>
@@ -712,7 +676,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 															<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(100)} type="button">MAX</button>
 														</div>
 														<div className="d-flex justify-content-center button-row margin_top">
-															<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(2)}>Approve</button>
+															{
+																this.state.approveFlag ?
+																	<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(2)}>Stake</button> :
+																	<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#CF3279", margin: 0}} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmApprove()}>Approve</button>
+															}
 														</div>
 													</form>
 												</div>
@@ -730,7 +698,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 														<label className="form-label">Total Rewards</label>
 														<h1 className="form-label total-amount">0.00</h1>
 														<div className="d-flex justify-content-center button-row margin_top">
-															<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>
+															{/*<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>*/}
 														</div>
 													</form>
 												</div>

@@ -24,6 +24,7 @@ import { Shoefy } from './contracts/shoefy';
 export type ShellNavProps = {
 	pages: IShellPage[];
 };
+
 export type ShellNavState = {
 	currentPage?: IShellPage;
 	wallet?: Wallet,
@@ -66,8 +67,6 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 	checkCurrentRoute() {
 		const location = window.location;
 
-		console.log(location);
-
 		if (location.pathname == "/launch" || location.pathname == "/lock" || location.pathname == "/swap" || location.pathname == "/liquidity") {
 			return true;
 		}
@@ -79,7 +78,7 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 			this.updateState({ pending: true });
 			const wallet = new Wallet();
 			const result = await wallet.connect();
-
+console.log(wallet)
 			if (!result) {
 				throw 'The wallet connection was cancelled.';
 			}

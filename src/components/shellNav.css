@@ -91,6 +91,7 @@
     padding: 10px 20px;
     background-color: #B32B69;
     border-radius: 15px;
+    cursor: pointer !important;
 }
 
 .wallet-connect {
