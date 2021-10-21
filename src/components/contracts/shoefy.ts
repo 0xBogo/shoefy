@@ -6,7 +6,8 @@ import Web3 from 'web3';
 export const ShoeFyAddress = "0xfBA067325d5F679D89f2933f4eA4c0158389455a";
 export const StakingAddress = "0xb905C3FAe6EcA3075f88A4E817E6B21E0bE74517";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
-export const Staking2Address = "0x4f4E5ff85C939b502EdC5B57ea0FC99694ebB1B4";
+// export const Staking2Address = "0x4f4E5ff85C939b502EdC5B57ea0FC99694ebB1B4";
+export const Staking2Address = "0x14ff266e92589065b3F6a636D5e65ABDa05bEF8B";
 
 export class Shoefy {
 	private readonly _wallet: Wallet;
