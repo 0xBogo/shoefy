@@ -272,97 +272,63 @@ class NFTStakingComponent extends BaseComponent<StakingProps & WithTranslation, 
 		const state = this.readState();
 		const t: TFunction<"translation"> = this.readProps().t;
 
+		const accountEllipsis = state.address ? `${state.address.substring(0, 4)}...${state.address.substring(state.address.length - 4)}` : '___';
 		return <div className="staking-container">
-			{/*<div className="i_header"> 
-				<div className="ih_left">
-					<SearchIcon sx={{ fontSize: 15 }}/>
-					<span className="ih_text">Type of Cryptocurrency</span>
-				</div>
-				<div className="ih_right">
-					<SettingsIcon  sx={{ fontSize: 15 }}/>
-					<NotificationsIcon className="ih_alert" sx={{ fontSize: 15 }}/>
-					{state.address ?
-						<div onClick={this.disconnectWallet} className="wallet-connect">
-							{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-							{state.balance_eth+ " ETH"}
-							<img className="ih_img" src={FoxImg} width="30" height="30"></img>
-							<span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
-						</div>
-						:
-						<div onClick={this.connectWallet} className="wallet-connect">
-							{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-							<img className="ih_img" src={FoxImg} width="30" height="30"></img>
-							<span className="ih_rtext">{t('staking.connect_wallet')}</span>
-						</div>
-					}
-				</div>
-			</div>*/}
 			
 			<div className="container">
-				{/* <div className="row text-white staking-header ml-3">
-					<div className="col-md-12 ">
-						<div className="staking-title">
-							<span>NFT</span>
-							<span style={{ color: "#abd9ea" }}>Staking</span>
-							{state.address ?
-								(<a className="shadow btn btn-primary ladda-button btn-md btn-wallet float-right" role="button" onClick={this.disconnectWallet}>
-									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"> </span>}
-									{t('staking.disconnect_wallet')}
-								</a>)
-								:
-								(<a className="shadow btn btn-primary ladda-button btn-md btn-wallet float-right" role="button" onClick={this.connectWallet}>
-									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"> </span>}
-									{t('staking.connect_wallet')}
-								</a>)
-							}
-						</div>
-					</div>
-				</div> */}
-
-				<div className="col staking-body mt-4">
+				<div className="col staking-body mt-5">
 					<FadeInLeftDiv className="col-md-12 d-flex">
-						<div className="shadow d-flex flex-column flex-fill gradient-card primary">
-							<h1>{t('staking.your_info.title')}</h1>
-							<h2>{t('staking.your_info.wallet_address')}</h2>
-							<p>{state.address || t('staking.your_info.connect_wallet')}</p>
-							{/* <h2>{t('staking.your_info.tradeable')}</h2>
-							<AnimatedNumber
-								value={numeral(state.balance || 0).format('0.00')}
-								duration="1000"
-								formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
-								className="staking-info"
-							>
-								0 ShoeFy
-							</AnimatedNumber>
-							<h2>{t('staking.your_info.staked')}</h2>
-							<AnimatedNumber
-								value={numeral(state.stakedBalance || 0).format('0.00')}
-								duration="1000"
-								formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
-								className="staking-info"
-							>
-								0 ShoeFy
-							</AnimatedNumber> */}
-							<h2>{t('staking.your_info.pending_rewards')}</h2>
-							<AnimatedNumber
-								value={numeral(state.pendingRewards || 0).format('0.00')}
-								duration="1000"
-								formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
-								className="staking-info"
-							>
-								0 Shoefy
-							</AnimatedNumber>
-							<h2>{t('staking.your_info.apr')}</h2>
-							<AnimatedNumber
-								value={numeral(state.apr || 0).format('0.00')}
-								duration="1000"
-								formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}%`}
-								className="staking-info"
-							>
-								0 Shoefy
-							</AnimatedNumber>
-							<div className="d-flex justify-content-center button-row">
-								<button className="btn btn-complementary btn-md link-dark align-self-center stake-claim" disabled={state.pendingRewards <= 0} type="button" onClick={async () => this.confirmClaimRewards()}>{t('staking.stake.claim_rewards')}</button>
+						<div className="shadow d-flex flex-column flex-fill gradient-card primary user-info">
+							<h1 className="user-info-title">Your Info</h1>
+							<div className="user-info-body">
+								<div>
+									<h2>{t('staking.your_info.wallet_address')}</h2>
+									<span style={{wordBreak: 'break-all'}}>{accountEllipsis}</span>
+								</div>
+								<div>
+									<h2>{t('staking.your_info.tradeable')}</h2>
+									<AnimatedNumber
+										value={numeral(state.balance || 0).format('0.00')}
+										duration="1000"
+										formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
+										className="staking-info"
+									>
+										0 ShoeFy
+									</AnimatedNumber>
+								</div>
+								<div>
+									<h2>{t('staking.your_info.staked')}</h2>
+									<AnimatedNumber
+										value={numeral(state.stakedBalance || 0).format('0.00')}
+										duration="1000"
+										formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
+										className="staking-info"
+									>
+										0 ShoeFy
+									</AnimatedNumber>
+								</div>
+								<div>
+									<h2>{t('staking.your_info.pending_rewards')}</h2>
+									<AnimatedNumber
+										value={numeral(state.pendingRewards || 0).format('0.00')}
+										duration="1000"
+										formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
+										className="staking-info"
+									>
+										0 Shoefy
+									</AnimatedNumber>
+								</div>
+								<div>
+									<h2>{t('staking.your_info.apr')}</h2>
+									<AnimatedNumber
+										value={numeral(state.apr || 0).format('0.00')}
+										duration="1000"
+										formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}%`}
+										className="staking-info"
+									>
+										0 Shoefy
+									</AnimatedNumber>
+								</div>
 							</div>
 						</div>
 					</FadeInLeftDiv>
