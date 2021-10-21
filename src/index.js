@@ -30,27 +30,31 @@ const pagesInNavigator = [
 	{ id: 'shoefyStaking', title: 'NFT Staking', component: StakingComponent },
 	{ id: 'snftStaking', title: 'Shoe Staking', component: NFTStakingComponent},
 	{ id: 'nftStaking', title: 'Farm', component: NFTStakingComponent},
-	{ id: 'shoefyStaking2', title: 'Booster NFTs', component: Staking2Component},
+	// { id: 'nftStaking', title: 'Farm', component: Comming},
+	// { id: 'shoefyStaking2', title: 'Booster NFTs', component: Staking2Component},
+	{ id: 'shoefyStaking2', title: 'Booster NFTs', component: Comming},
+	{ id: 'nftFarming', title: 'nft Farming', component: Comming},
 	{ id: 'chart', title: 'Chart', component: Chart},
-	{ id: 'comming', title: 'Chart', component: Comming},
 ];
 
 const overrideCss = css`
 	margin-left: 50%
 `;
 
-// import {getLibrary} from './utils/getLibrary';
+import {getLibrary} from './utils/getLibrary';
 
-// const NetworkContextName = `${new Date().getTime()}-NETWORK`;
-// const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
-// <Web3ReactProvider getLibrary={getLibrary}>
+const NetworkContextName = `${new Date().getTime()}-NETWORK`;
+const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
+
 
 // initialize modals
 Modal.setAppElement('#root');
 // and render our app into the "root" element!
 ReactDOM.render(
-	<React.Suspense fallback={<ClipLoader color={"#FFFFFF"} css={overrideCss}/>}>
-		<Shell pages={pagesInNavigator} />
-	</React.Suspense>
+	<Web3ReactProvider getLibrary={getLibrary}>
+		<React.Suspense fallback={<ClipLoader color={"#FFFFFF"} css={overrideCss}/>}>
+			<Shell pages={pagesInNavigator} />
+		</React.Suspense>
+	</Web3ReactProvider>
 	,document.getElementById('root')
 );

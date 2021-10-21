@@ -7,11 +7,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import Img from '../../../images/fox.png';
 
-
 const Header = () => {
-
-
-
     return (
         <div className="i_header"> 
             {/* <div className="ih_left">
