@@ -19,6 +19,6 @@ export class ShellHost extends BaseComponent<ShellHostProps, ShellHostState> {
 			return null;
 		}
 
-		return React.createElement(page.component, page.componentProps || {})
+		return React.createElement(page.component, {...page.componentProps} || {})
 	}
 }
