@@ -32,6 +32,7 @@ export type ShellNavState = {
 	currentPage?: IShellPage;
 	shoefy?: Shoefy,
 	address?: string,
+	accountEllipsis?: string
 };
 
 class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavState> {
@@ -41,6 +42,12 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 
 		this.connectWallet = this.connectWallet.bind(this);
 		this.disconnectWallet = this.disconnectWallet.bind(this);
+	}
+
+	async componentDidMount() {
+		if ((window.ethereum || {}).selectedAddress) {
+			this.connectWallet();
+		}
 	}
 
 	toggleMenu = (e) => {
@@ -117,7 +124,8 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 		const shoefy = this.readState().shoefy;
 
 		this.updateState({
-			address: this.props.wallet._address
+			address: this.props.wallet._address,
+			accountEllipsis: this.props.wallet._address ? `${this.props.wallet._address.substring(0, 4)}...${this.props.wallet._address.substring(this.props.wallet._address.length - 4)}` : '___'
 		});
 
 		return true;
@@ -136,8 +144,6 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 		const pages2 = pages.slice(3, 7);
 
 		const state = this.readState();
-
-        const accountEllipsis = this.props.wallet._address ? `${this.props.wallet._address.substring(0, 4)}...${this.props.wallet._address.substring(this.props.wallet._address.length - 4)}` : '___';
 		
 		return (
 			<div className="navigation-wrapper">
@@ -161,7 +167,7 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 							{this.props.wallet._address ?
 								<div onClick={this.disconnectWallet} className="wallet-connect">
 									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-									<span className="ih_rtext">{accountEllipsis}</span>
+									<span className="ih_rtext">{this.state.accountEllipsis}</span>
 								</div>
 								:
 								<div onClick={this.connectWallet} className="wallet-connect">

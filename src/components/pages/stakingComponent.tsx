@@ -105,6 +105,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 				if (state.ctValueStake >= 0) {
 					console.log("ctVa:", state.ctValueStake);
 					await state.shoefy.stake2(state.ctValueStake, step);
+
+					document.getElementById('modalswitch2').click();
 				}
 				else {
 					NotificationManager.warning("Can't stake a negative amount.");
@@ -126,6 +128,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 				if (state.ctValueStake >= 0) {
 					//console.log("ctVa:", state.ctValueStake);
 					await state.shoefy.stake(state.ctValueStake);
+
+					document.getElementById('modalswitch2').click();
 				}
 				else {
 					NotificationManager.warning("Can't stake a negative amount.");
@@ -149,6 +153,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 			if (Number(state.ctValueUnstake) >= 0) {
 				await state.shoefy.unstakeAndClaim(state.ctValueUnstake);
+
+				document.getElementById('modalswitch3').click();
 			}
 			else {
 				NotificationManager.warning("Can't unstake a negative amount.");
@@ -193,12 +199,6 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		catch (e) {
 			this.updateState({ pending: false });
 			this.handleError(e);
-		}
-	}
-
-	async componentDidMount() {
-		if ((window.ethereum || {}).selectedAddress) {
-			this.connectWallet();
 		}
 	}
 
@@ -319,7 +319,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		if (!r) return;
 
 		const t = r.balance;
-		const v = Math.max(0, Math.min(+(value || 0), r.balance)).toString();
+		const v = Math.max(0, Math.min(+(value || 0), r.balance));
 
 		this.updateState({
 			ctPercentageStake: Math.floor(100 * v / t),
@@ -341,7 +341,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 	}
 
 	setUnstakeValue(value) {
-		const v = Math.max(0, value).toString();
+		const v = Math.max(0, value);
 		this.updateState({
 			ctValueUnstake: v,
 		});
