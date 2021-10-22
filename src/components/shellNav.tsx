@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { compose } from 'recompose';
 
 import { NavLink, useLocation } from 'react-router-dom';
 import { BaseComponent, IShellPage, ShellErrorHandler } from './shellInterfaces';
@@ -9,6 +10,7 @@ import { supportedLanguages, languageCodeOnly } from '../i18n';
 import './shellNav.css';
 import './shellNav.icons.css';
 import { Wallet } from './wallet';
+import { withWallet } from './walletContext';
 import { ShoefyNFTStaking } from './contracts/nftStaking';
 
 import CachedIcon from '@mui/icons-material/Cached';
@@ -23,11 +25,11 @@ import { Shoefy } from './contracts/shoefy';
 
 export type ShellNavProps = {
 	pages: IShellPage[];
+	wallet?: Wallet,
 };
 
 export type ShellNavState = {
 	currentPage?: IShellPage;
-	wallet?: Wallet,
 	shoefy?: Shoefy,
 	address?: string,
 };
@@ -76,9 +78,10 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 	async connectWallet() {
 		try {
 			this.updateState({ pending: true });
-			const wallet = new Wallet();
+			// const wallet = new Wallet();
+			const wallet = this.props.wallet;
 			const result = await wallet.connect();
-console.log(wallet)
+
 			if (!result) {
 				throw 'The wallet connection was cancelled.';
 			}
@@ -87,8 +90,6 @@ console.log(wallet)
 
 			this.updateState({ shoefy: shoefy, wallet: wallet, looping: true, pending: false });
 			this.updateOnce(true).then();
-
-			this.loop().then();
 		}
 		catch (e) {
 			this.updateState({ pending: false });
@@ -99,7 +100,7 @@ console.log(wallet)
 	async disconnectWallet() {
 		try {
 			this.updateState({ pending: true });
-			const result = await this.state.wallet.disconnect();
+			const result = await this.props.wallet.disconnect();
 			if (result) {
 				throw 'The wallet connection was cancelled.';
 			}
@@ -112,48 +113,12 @@ console.log(wallet)
 		}
 	}
 
-	private async loop(): Promise<void> {
-		const self = this;
-		const cont = await self.updateOnce.call(self);
-
-		if (cont) {
-			this._timeout = setTimeout(async () => await self.loop.call(self), 1000);
-		}
-	}
-	private async updateOnce(resetCt?: boolean): Promise<boolean> {
+	private async updateOnce(): Promise<boolean> {
 		const shoefy = this.readState().shoefy;
 
-		if (!!shoefy) {
-			try {
-				await shoefy.refresh();
-				if (!this.readState().looping) {
-					return false;
-				}
-				this.updateState({
-					address: shoefy.wallet.currentAddress,
-					balance: shoefy.balance,
-					stakedBalance: shoefy.stakedBalance,
-					pendingRewards: shoefy.pendingStakeRewards,
-					apr: shoefy.apr
-				});
-
-				if (resetCt) {
-					this.updateState({
-						ctPercentageStake: 0,
-						ctValueStake: 0,
-						ctPercentageUnstake: 0,
-						ctValueUnstake: 0
-					})
-				}
-
-			}
-			catch (e) {
-				console.warn('Unable to update staking status', e);
-			}
-		}
-		else {
-			return false;
-		}
+		this.updateState({
+			address: this.props.wallet._address
+		});
 
 		return true;
 	}
@@ -172,6 +137,8 @@ console.log(wallet)
 
 		const state = this.readState();
 
+        const accountEllipsis = this.props.wallet._address ? `${this.props.wallet._address.substring(0, 4)}...${this.props.wallet._address.substring(this.props.wallet._address.length - 4)}` : '___';
+		
 		return (
 			<div className="navigation-wrapper">
 				<div className="logo-wrapper">
@@ -191,10 +158,10 @@ console.log(wallet)
 						<li className="nav_letter"><NavLink className="link_letter" to="nftFarming">Farm</NavLink></li>
 						<li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking2">Booster NFTs</NavLink></li>
 						<li className="nav_letter">
-							{state.address ?
+							{this.props.wallet._address ?
 								<div onClick={this.disconnectWallet} className="wallet-connect">
 									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-									<span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
+									<span className="ih_rtext">{accountEllipsis}</span>
 								</div>
 								:
 								<div onClick={this.connectWallet} className="wallet-connect">
@@ -210,4 +177,11 @@ console.log(wallet)
 	}
 }
 
-export default withTranslation()(ShellNav);
+// export default withTranslation()(ShellNav);
+const ShellNavWithTranlation = withTranslation()(ShellNav);
+
+const ShellNavMain = compose(
+  withWallet,
+)(ShellNavWithTranlation);
+
+export default ShellNavMain

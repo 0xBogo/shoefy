@@ -1,8 +1,11 @@
 import * as React from 'react';
 import * as numeral from 'numeral';
+import { compose } from 'recompose';
 
 import { BaseComponent, ShellErrorHandler } from '../shellInterfaces';
 import { Wallet } from '../wallet';
+import { withWallet } from '../walletContext';
+
 import { Shoefy } from '../contracts/shoefy';
 import { WithTranslation, withTranslation, TFunction, Trans } from 'react-i18next';
 import { fadeInLeft, fadeInRight, pulse } from 'react-animations';
@@ -161,6 +164,22 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		}
 	}
 
+	async confirmClaim(): Promise<void> {
+		try {
+			const state = this.readState();
+			this.updateState({ pending: true });
+
+			await state.shoefy.claim();
+
+			this.updateState({ pending: false });
+			this.updateOnce(true).then();
+		}
+		catch (e) {
+			this.updateState({ pending: false });
+			this.handleError(e);
+		}
+	}
+
 	async confirmApprove(): Promise<void> {
 		try {
 			const state = this.readState();
@@ -207,23 +226,27 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 				if (!this.readState().looping) {
 					return false;
 				}
-				this.updateState({
-					address: shoefy.wallet.currentAddress,
-					balance: shoefy.balance,
-					stakedBalance: shoefy.stakedBalance,
-					pendingRewards: shoefy.pendingStakeRewards,
-					apr: shoefy.apr,
-					balance_eth: shoefy.balance_eth
-				});
-
 				if (resetCt) {
-					this.updateState({
-						ctPercentageStake: 0,
-						ctValueStake: 0,
-						ctPercentageUnstake: 0,
-						ctValueUnstake: 0
-					})
-				}
+                    this.updateState({
+                        ctPercentageStake: 0,
+                        ctValueStake: 0,
+                        ctPercentageUnstake: 0,
+                        ctValueUnstake: 0,
+                        address: this.props.wallet._address,
+                        balance: shoefy.balance,
+                        stakedBalance: shoefy.stakedBalance,
+                        pendingRewards: shoefy.pendingStakeRewards,
+                        apr: shoefy.apr
+                    })
+                } else {
+                    this.updateState({
+                        address: this.props.wallet._address,
+                        balance: shoefy.balance,
+                        stakedBalance: shoefy.stakedBalance,
+                        pendingRewards: shoefy.pendingStakeRewards,
+                        apr: shoefy.apr
+                    });
+                }
 
 			}
 			catch (e) {
@@ -240,7 +263,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 	async connectWallet() {
 		try {
 			this.updateState({ pending: true });
-			const wallet = new Wallet();
+			const wallet = this.props.wallet;
 			const result = await wallet.connect();
 
 
@@ -265,7 +288,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 	async disconnectWallet() {
 		try {
 			this.updateState({ pending: true });
-			const result = await this.state.wallet.disconnect();
+			const result = await this.props.wallet.disconnect();
 			if (result) {
 				throw 'The wallet connection was cancelled.';
 			}
@@ -346,7 +369,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		const state = this.readState();
 		const t: TFunction<"translation"> = this.readProps().t;
 
-		const accountEllipsis = state.address ? `${state.address.substring(0, 4)}...${state.address.substring(state.address.length - 4)}` : '___';
+		const accountEllipsis = this.props.wallet._address ? `${this.props.wallet._address.substring(0, 4)}...${this.props.wallet._address.substring(this.props.wallet._address.length - 4)}` : '___';
 		return <div className="staking-container">
 			<div className="container">
 				<div className="row staking-body mt-5">
@@ -470,7 +493,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 														<label className="form-label">Total Rewards</label>
 														<h1 className="form-label total-amount">0.00</h1>
 														<div className="d-flex justify-content-center button-row margin_top">
-															{/*<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>*/}
+															<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} type="button" onClick={async () => this.confirmClaim()}>Claim</button>
 														</div>
 													</form>
 												</div>
@@ -716,4 +739,10 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 	}
 }
 
-export default withTranslation()(StakingComponent);
+const StakingComponentWithTranlation = withTranslation()(StakingComponent);
+
+const StakingComponentMain = compose(
+  withWallet,
+)(StakingComponentWithTranlation);
+
+export default StakingComponentMain

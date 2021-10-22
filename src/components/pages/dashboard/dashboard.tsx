@@ -1,17 +1,19 @@
 import React from 'react';
+import { compose } from 'recompose';
 import './dashboard.css';
 
 import { BaseComponent, IShellPage, ShellErrorHandler } from '../../shellInterfaces';
-import { Wallet } from '../../wallet';
 import { Shoefy } from '../../contracts/shoefy';
 import { TFunction, withTranslation, WithTranslation } from 'react-i18next';
+import { Wallet } from './wallet';
+import { withWallet } from '../../walletContext';
 
 export type DashboardProps = {
     pages: IShellPage[];
+    wallet?: Wallet,
 };
 export type DashboardState = {
     currentPage?: IShellPage;
-    wallet?: Wallet,
     shoefy?: Shoefy,
     address?: string,
 };
@@ -28,7 +30,8 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
     async connectWallet() {
         try {
             this.updateState({ pending: true });
-            const wallet = new Wallet();
+            // const wallet = new Wallet();
+            const wallet = this.props.wallet;
             const result = await wallet.connect();
 
             if (!result) {
@@ -51,7 +54,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
     async disconnectWallet() {
         try {
             this.updateState({ pending: true });
-            const result = await this.state.wallet.disconnect();
+            const result = await this.props.wallet.disconnect();
             if (result) {
                 throw 'The wallet connection was cancelled.';
             }
@@ -81,21 +84,27 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                 if (!this.readState().looping) {
                     return false;
                 }
-                this.updateState({
-                    address: shoefy.wallet.currentAddress,
-                    balance: shoefy.balance,
-                    stakedBalance: shoefy.stakedBalance,
-                    pendingRewards: shoefy.pendingStakeRewards,
-                    apr: shoefy.apr
-                });
 
                 if (resetCt) {
                     this.updateState({
                         ctPercentageStake: 0,
                         ctValueStake: 0,
                         ctPercentageUnstake: 0,
-                        ctValueUnstake: 0
+                        ctValueUnstake: 0,
+                        address: this.props.wallet._address,
+                        balance: shoefy.balance,
+                        stakedBalance: shoefy.stakedBalance,
+                        pendingRewards: shoefy.pendingStakeRewards,
+                        apr: shoefy.apr
                     })
+                } else {
+                    this.updateState({
+                        address: this.props.wallet._address,
+                        balance: shoefy.balance,
+                        stakedBalance: shoefy.stakedBalance,
+                        pendingRewards: shoefy.pendingStakeRewards,
+                        apr: shoefy.apr
+                    });
                 }
 
             }
@@ -116,6 +125,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
         const t: TFunction<"translation"> = this.readProps().t;
         const state = this.readState();
 
+        const accountEllipsis = this.props.wallet._address ? `${this.props.wallet._address.substring(0, 4)}...${this.props.wallet._address.substring(this.props.wallet._address.length - 4)}` : '___';
         return (
             <div>
                 <div className="back">
@@ -142,10 +152,10 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                     <div className="title">SHOEFY LEGENDARY</div>
                     <div className="smalltext">Unleash the legendary SHOEFY that are being sealed.</div>
                     <div style={{ display: "flex", justifyContent: "center" }}>
-                        {state.address ?
+                        {this.props.wallet._address ?
                             <div onClick={this.disconnectWallet} className="wallet-connect1">
                                 {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-                                <span className="ih_rtext">{t('staking.disconnect_wallet')}</span>
+                                <span className="ih_rtext">{accountEllipsis}</span>
                             </div>
                             :
                             <div onClick={this.connectWallet} className="wallet-connect1">
@@ -160,4 +170,10 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
     }
 }
 
-export default withTranslation()(Dashboard);
+const DashboardWithTranlation = withTranslation()(Dashboard);
+
+const DashboardMain = compose(
+  withWallet,
+)(DashboardWithTranlation);
+
+export default DashboardMain

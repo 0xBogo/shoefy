@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
-import {createWeb3ReactRoot, Web3ReactProvider} from '@web3-react/core';
+// import {createWeb3ReactRoot, Web3ReactProvider} from '@web3-react/core';
 
 // and bootstrap
 import 'bootstrap';
@@ -23,6 +23,9 @@ import NFTStakingComponent from './components/pages/nftStakingComponent';
 import Chart from './components/pages/chart';
 import Comming from './components/pages/comming';
 
+import { Wallet } from './components/wallet';
+import WalletContext from './components/walletContext.js';
+
 import './i18n';
 
 const pagesInNavigator = [
@@ -41,20 +44,22 @@ const overrideCss = css`
 	margin-left: 50%
 `;
 
-import {getLibrary} from './utils/getLibrary';
+// import {getLibrary} from './utils/getLibrary';
 
-const NetworkContextName = `${new Date().getTime()}-NETWORK`;
-const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
+// const NetworkContextName = `${new Date().getTime()}-NETWORK`;
+// const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
 
+	{/*<Web3ReactProvider getLibrary={getLibrary}>*/}
 
 // initialize modals
 Modal.setAppElement('#root');
 // and render our app into the "root" element!
+
 ReactDOM.render(
-	<Web3ReactProvider getLibrary={getLibrary}>
+	<WalletContext.Provider value={new Wallet()}>
 		<React.Suspense fallback={<ClipLoader color={"#FFFFFF"} css={overrideCss}/>}>
 			<Shell pages={pagesInNavigator} />
 		</React.Suspense>
-	</Web3ReactProvider>
+	</WalletContext.Provider>
 	,document.getElementById('root')
 );

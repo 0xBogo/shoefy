@@ -82,7 +82,6 @@ export class Shoefy {
 		await this.refresh();
 
 		if (this._balance >= amount) {
-			await this._shoeFyContract.methods.approve(StakingAddress, web3.toWei(String(amount),'ether')).send({'from': this._wallet.currentAddress});
 			await this._stakingContract.methods.stakeIn(web3.toWei(String(amount),'ether')).send({'from': this._wallet.currentAddress});
 		}
 		else {
@@ -91,7 +90,6 @@ export class Shoefy {
 	}
 	async unstakeAndClaim(amount: number): Promise<void> {
 		await this.refresh();
-
 		if (this._stake >= amount) {
 			await this._stakingContract.methods.withdrawStake(web3.toWei(String(amount),'ether')).send({'from': this._wallet.currentAddress});
 		}
