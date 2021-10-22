@@ -16,6 +16,7 @@ export type DashboardState = {
     currentPage?: IShellPage;
     shoefy?: Shoefy,
     address?: string,
+    accountEllipsis?: string
 };
 
 class Dashboard extends BaseComponent<DashboardProps & WithTranslation, DashboardState> {
@@ -25,6 +26,12 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
 
         this.connectWallet = this.connectWallet.bind(this);
         this.disconnectWallet = this.disconnectWallet.bind(this);
+    }
+
+    async componentDidMount() {
+        if ((window.ethereum || {}).selectedAddress) {
+            this.connectWallet();
+        }
     }
 
     async connectWallet() {
@@ -69,52 +76,19 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
 
     private async loop(): Promise<void> {
         const self = this;
-        const cont = await self.updateOnce.call(self);
+        const cont = await self.updateOnce.call();
 
         if (cont) {
             this._timeout = setTimeout(async () => await self.loop.call(self), 1000);
         }
     }
-    private async updateOnce(resetCt?: boolean): Promise<boolean> {
+    private async updateOnce(): Promise<boolean> {
         const shoefy = this.readState().shoefy;
 
-        if (!!shoefy) {
-            try {
-                await shoefy.refresh();
-                if (!this.readState().looping) {
-                    return false;
-                }
-
-                if (resetCt) {
-                    this.updateState({
-                        ctPercentageStake: 0,
-                        ctValueStake: 0,
-                        ctPercentageUnstake: 0,
-                        ctValueUnstake: 0,
-                        address: this.props.wallet._address,
-                        balance: shoefy.balance,
-                        stakedBalance: shoefy.stakedBalance,
-                        pendingRewards: shoefy.pendingStakeRewards,
-                        apr: shoefy.apr
-                    })
-                } else {
-                    this.updateState({
-                        address: this.props.wallet._address,
-                        balance: shoefy.balance,
-                        stakedBalance: shoefy.stakedBalance,
-                        pendingRewards: shoefy.pendingStakeRewards,
-                        apr: shoefy.apr
-                    });
-                }
-
-            }
-            catch (e) {
-                console.warn('Unable to update staking status', e);
-            }
-        }
-        else {
-            return false;
-        }
+        this.updateState({
+            address: this.props.wallet._address,
+            accountEllipsis: this.props.wallet._address ? `${this.props.wallet._address.substring(0, 4)}...${this.props.wallet._address.substring(this.props.wallet._address.length - 4)}` : '___'
+        });
 
         return true;
     }
