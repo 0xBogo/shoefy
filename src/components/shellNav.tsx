@@ -43,6 +43,7 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 		this.connectWallet = this.connectWallet.bind(this);
 		this.disconnectWallet = this.disconnectWallet.bind(this);
 		this.connectWalletClick = this.connectWalletClick.bind(this);
+		this.disconnectWalletClick = this.disconnectWalletClick.bind(this);
 	}
 
 	async componentWillMount() {
@@ -134,6 +135,13 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 		}
 	}
 
+	async disconnectWalletClick() {
+		await this.disconnectWallet();
+
+		const location = window.location;
+		location.href = location.pathname;
+	}
+
 	private async updateOnce(): Promise<boolean> {
 		const shoefy = this.readState().shoefy;
 
@@ -179,7 +187,7 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 						<li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking2">Booster NFTs</NavLink></li>
 						<li className="nav_letter">
 							{this.props.wallet._address ?
-								<div onClick={this.disconnectWallet} className="wallet-connect">
+								<div onClick={this.disconnectWalletClick} className="wallet-connect">
 									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
 									<span className="ih_rtext">{this.state.accountEllipsis}</span>
 								</div>
