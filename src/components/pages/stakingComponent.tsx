@@ -208,6 +208,12 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		}
 		this.updateState({ shoefy: null, looping: false });
 	}
+	
+	async componentDidMount() {
+		if ((window.ethereum || {}).selectedAddress) {
+			this.connectWallet();
+		}
+	}
 
 	private async loop(): Promise<void> {
 		const self = this;
@@ -272,7 +278,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 			}
 
 			const shoefy = new Shoefy(wallet);
-
+console.log(shoefy)
 			this.updateState({ shoefy: shoefy, wallet: wallet, looping: true, pending: false });
 
 			this.updateOnce(true).then();
