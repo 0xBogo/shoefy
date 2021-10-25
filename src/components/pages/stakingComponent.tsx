@@ -512,7 +512,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 								</div>
 								<div className="stake2">
 									<div className="s2_up">SHOE/BTC LP </div>
-									<div className="s2_down">Flexible Time</div>
+									<div className="s2_down">Static Time</div>
 								</div>
 								<div className="stake1">
 									<div className="s2_up">APR</div>
@@ -588,7 +588,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 								</div>
 								<div className="stake2">
 									<div className="s2_up">SHOE/BTC LP </div>
-									<div className="s2_down">Flexible Time</div>
+									<div className="s2_down">Static Time</div>
 								</div>
 								<div className="stake1">
 									<div className="s2_up">APR</div>
@@ -664,7 +664,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 								</div>
 								<div className="stake2">
 									<div className="s2_up">SHOE/BTC LP </div>
-									<div className="s2_down">Flexible Time</div>
+									<div className="s2_down">Static Time</div>
 								</div>
 								<div className="stake1">
 									<div className="s2_up">APR</div>
