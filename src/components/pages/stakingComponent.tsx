@@ -278,7 +278,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 			}
 
 			const shoefy = new Shoefy(wallet);
-console.log(shoefy)
+
 			this.updateState({ shoefy: shoefy, wallet: wallet, looping: true, pending: false });
 
 			this.updateOnce(true).then();

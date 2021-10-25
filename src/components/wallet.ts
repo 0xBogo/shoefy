@@ -151,10 +151,10 @@ export class Wallet {
 		return this.isConnected;
 	}
 
-	public get isConnected(): boolean {
+	public isConnected(): boolean {
 		return !!this._address;
 	}
-	public get currentAddress(): string {
+	public currentAddress(): string {
 		return this._address;
 	}
 

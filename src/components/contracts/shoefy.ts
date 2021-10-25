@@ -54,7 +54,7 @@ export class Shoefy {
 
 	async approve(amount: number): Promise<void> {
 		if (this._balance >= amount) {
-			await this._shoeFyContract.methods.approve(StakingAddress, web3.toWei(String(amount),'ether')).send({'from': this._wallet.currentAddress});
+			await this._shoeFyContract.methods.approve(StakingAddress, web3.toWei(String(amount),'ether')).send({'from': this._wallet._address});
 		} else {
 			throw 'Your shoefy balance is not sufficient to stake this amount';
 		}
@@ -62,7 +62,7 @@ export class Shoefy {
 
 	async approve2(amount: number): Promise<void> {
 		if (this._balance >= amount) {
-			let flag = await this._shoeFyContract.methods.approve(Staking2Address, web3.toWei(String(amount),'ether')).send({'from': this._wallet.currentAddress});
+			let flag = await this._shoeFyContract.methods.approve(Staking2Address, web3.toWei(String(amount),'ether')).send({'from': this._wallet._address});
 			return flag
 		} else {
 			throw 'Your shoefy balance is not sufficient to stake this amount';
@@ -71,7 +71,7 @@ export class Shoefy {
 
 	async stake2(amount: number, stakestep: number): Promise<void> {
 		if (this._balance >= amount) {
-			await this._staking2Contract.methods.stake(amount, stakestep).send({'from': this._wallet.currentAddress});
+			await this._staking2Contract.methods.stake(amount, stakestep).send({'from': this._wallet._address});
 		}
 		else {
 			throw 'Your shoefy balance is not sufficient to stake this amount';
@@ -82,7 +82,7 @@ export class Shoefy {
 		await this.refresh();
 
 		if (this._balance >= amount) {
-			await this._stakingContract.methods.stakeIn(web3.toWei(String(amount),'ether')).send({'from': this._wallet.currentAddress});
+			await this._stakingContract.methods.stakeIn(web3.toWei(String(amount),'ether')).send({'from': this._wallet._address});
 		}
 		else {
 			throw 'Your shoefy balance is not sufficient to stake this amount';
@@ -91,27 +91,28 @@ export class Shoefy {
 	async unstakeAndClaim(amount: number): Promise<void> {
 		await this.refresh();
 		if (this._stake >= amount) {
-			await this._stakingContract.methods.withdrawStake(web3.toWei(String(amount),'ether')).send({'from': this._wallet.currentAddress});
+			await this._stakingContract.methods.withdrawStake(web3.toWei(String(amount),'ether')).send({'from': this._wallet._address});
 		}
 		else {
 			throw 'Your staked shoefy balance is not sufficient to unstake this amount';
 		}
 	}
 	async claim(): Promise<void> {
-		await this._stakingContract.methods.claimStakingRewards().send({'from': this._wallet.currentAddress});
+		await this._stakingContract.methods.claimStakingRewards().send({'from': this._wallet._address});
 		await this.refresh();
 	}
 
 	async refresh(): Promise<void> {
 		let web3 = new Web3(window.ethereum);
-		let balance_eth = await web3.eth.getBalance(this._wallet.currentAddress);
+
+		let balance_eth = await web3.eth.getBalance(this._wallet._address);
 		// console.log((web3.utils.fromWei(balance_eth, "ether")+" ETH"));
 
 		this._balance_eth = parseFloat((web3.utils.fromWei(balance_eth, "ether"))).toFixed(3);
 		// console.log(this._balance_eth)
-		this._balance = Math.floor(await this._shoeFyContract.methods.balanceOf(this._wallet.currentAddress).call() / (10 ** 12)) / (10 ** 6);
-		this._stake = await this._stakingContract.methods.stakedBalanceOf(this._wallet.currentAddress).call() / (10 ** 18);
-		this._pendingRewards = await this._stakingContract.methods.pendingRewards(this._wallet.currentAddress).call() / (10 ** 18);
+		this._balance = Math.floor(await this._shoeFyContract.methods.balanceOf(this._wallet._address).call() / (10 ** 12)) / (10 ** 6);
+		this._stake = await this._stakingContract.methods.stakedBalanceOf(this._wallet._address).call() / (10 ** 18);
+		this._pendingRewards = await this._stakingContract.methods.pendingRewards(this._wallet._address).call() / (10 ** 18);
 		this._apr = await this._stakingContract.methods.getCurrentAPR().call() / 100;
 		// console.log('_apr', this._balance);
 	}

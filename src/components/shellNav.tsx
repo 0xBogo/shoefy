@@ -42,6 +42,13 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 
 		this.connectWallet = this.connectWallet.bind(this);
 		this.disconnectWallet = this.disconnectWallet.bind(this);
+		this.connectWalletClick = this.connectWalletClick.bind(this);
+	}
+
+	async componentWillMount() {
+		if ((window.ethereum || {}).selectedAddress) {
+			this.connectWallet();
+		}
 	}
 
 	async componentDidMount() {
@@ -102,6 +109,13 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 			this.updateState({ pending: false });
 			this.handleError(e);
 		}
+	}
+
+	async connectWalletClick() {
+		await this.connectWallet();
+
+		const location = window.location;
+		location.href = location.pathname;
 	}
 
 	async disconnectWallet() {
@@ -170,7 +184,7 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 									<span className="ih_rtext">{this.state.accountEllipsis}</span>
 								</div>
 								:
-								<div onClick={this.connectWallet} className="wallet-connect">
+								<div onClick={this.connectWalletClick} className="wallet-connect">
 									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
 									<span className="ih_rtext">{t('staking.connect_wallet')}</span>
 								</div>
