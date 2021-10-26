@@ -42,51 +42,12 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 
 		this.connectWallet = this.connectWallet.bind(this);
 		this.disconnectWallet = this.disconnectWallet.bind(this);
-		this.connectWalletClick = this.connectWalletClick.bind(this);
-	}
-
-	async componentWillMount() {
-		if ((window.ethereum || {}).selectedAddress) {
-			this.connectWallet();
-		}
 	}
 
 	async componentDidMount() {
 		if ((window.ethereum || {}).selectedAddress) {
 			this.connectWallet();
 		}
-	}
-
-	toggleMenu = (e) => {
-		if (window.innerWidth < 990)
-			this.collapseRef.current.click();
-	}
-
-	collapsedNavItem(title) {
-		return <li className="sudo-nav-link">
-			<a href="" className={`d-flex justify-content-between nav-item ${title.toLowerCase()}`}>
-				<p>{title}</p>
-				<p>▼</p>
-			</a>
-		</li>
-	}
-
-	expandedNavItem(title) {
-		return <li className="sudo-nav-link">
-			<a href="" className={`d-flex justify-content-between nav-item ${title.toLowerCase()}`}>
-				<p>{title}</p>
-				<p>▲</p>
-			</a>
-		</li>
-	}
-
-	checkCurrentRoute() {
-		const location = window.location;
-
-		if (location.pathname == "/launch" || location.pathname == "/lock" || location.pathname == "/swap" || location.pathname == "/liquidity") {
-			return true;
-		}
-		return false;
 	}
 
 	async connectWallet() {
@@ -109,13 +70,6 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 			this.updateState({ pending: false });
 			this.handleError(e);
 		}
-	}
-
-	async connectWalletClick() {
-		await this.connectWallet();
-
-		const location = window.location;
-		location.href = location.pathname;
 	}
 
 	async disconnectWallet() {
@@ -184,7 +138,7 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 									<span className="ih_rtext">{this.state.accountEllipsis}</span>
 								</div>
 								:
-								<div onClick={this.connectWalletClick} className="wallet-connect">
+								<div onClick={this.connectWallet} className="wallet-connect">
 									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
 									<span className="ih_rtext">{t('staking.connect_wallet')}</span>
 								</div>
