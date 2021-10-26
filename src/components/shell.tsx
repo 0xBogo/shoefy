@@ -35,7 +35,7 @@ export class Shell extends BaseComponent<ShellProps, ShellState> {
 		const pages = this.readProps().pages;
 		return <Router>
 			<div className="main-wrapper">
-				<ShellNav pages={pages} />
+				{/*<ShellNav pages={pages} />*/}
 				<div className="content-wrapper">
 					<div className="part_c">
 						<Switch>
@@ -55,9 +55,9 @@ export class Shell extends BaseComponent<ShellProps, ShellState> {
 							/>
 						</Switch>
 					</div>
-				    <div className="part_f">
+				    {/*<div className="part_f">
 						<Footer />
-					</div>
+					</div>*/}
 				</div>
 			</div>
 		</Router>
