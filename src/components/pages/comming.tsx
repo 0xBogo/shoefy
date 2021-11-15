@@ -55,11 +55,11 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
         	</div>
         	<div>
 	        	<h3>{minutes < 10 ? '0'+minutes : minutes }</h3>
-	        	<span>Seconds</span>
+	        	<span>Minutes</span>
         	</div>
         	<div>
 	        	<h3>{seconds < 10 ? '0'+seconds : seconds }</h3>
-	        	<span>Minutes</span>
+	        	<span>Seconds</span>
         	</div>
       	</div>
     );
