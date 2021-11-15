@@ -3,8 +3,8 @@ import {Contract} from 'web3-eth-contract';
 // import { ethers } from 'ethers';
 import * as web3 from 'web3-utils';
 import Web3 from 'web3';
-export const ShoeFyAddress = "0xfBA067325d5F679D89f2933f4eA4c0158389455a";
-export const StakingAddress = "0xb905C3FAe6EcA3075f88A4E817E6B21E0bE74517";
+export const ShoeFyAddress = "0xD6fF37E2c4C2577FA8feE01714c7A3756CbBE981";
+export const StakingAddress = "0x421c0172f29893e3984a2c8a86f65429c15ebeee";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
 // export const Staking2Address = "0x4f4E5ff85C939b502EdC5B57ea0FC99694ebB1B4";
 export const Staking2Address = "0x14ff266e92589065b3F6a636D5e65ABDa05bEF8B";
@@ -60,9 +60,10 @@ export class Shoefy {
 		}
 	}
 
-	async approve2(amount: number): Promise<void> {
+	async approve2(amount: any): Promise<void> {
+
 		if (this._balance >= amount) {
-			let flag = await this._shoeFyContract.methods.approve(Staking2Address, web3.toWei(String(amount),'ether')).send({'from': this._wallet._address});
+			let flag = await this._shoeFyContract.methods.approve(StakingAddress, web3.toWei(String(amount),'ether')).send({'from': this._wallet._address});
 			return flag
 		} else {
 			throw 'Your shoefy balance is not sufficient to stake this amount';
