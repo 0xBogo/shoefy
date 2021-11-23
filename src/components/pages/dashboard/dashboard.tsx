@@ -167,9 +167,9 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                                 </div>
                                             )
                                         })
-                                    }<img src="images/main.png" style={{ position: "absolute", left: "50%", top: "0px", transform: "translate(-50% , 0%)", width: "650px" }} />
+                                    }<img src="images/main.png" style={{ position: "absolute", left: "50%", top: "0px", transform: "translate(-50% , 0%)", width: "650px" }} className="main-img" />
                                 </div>
-                                
+
                             </div>
                             <div style={{ position: "relative" }}>
                                 <div className="title">SHOEFY LEGENDARY</div>
@@ -202,7 +202,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
 const DashboardWithTranlation = withTranslation()(Dashboard);
 
 const DashboardMain = compose(
-  withWallet,
+    withWallet,
 )(DashboardWithTranlation);
 
 export default DashboardMain

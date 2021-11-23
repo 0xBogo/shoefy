@@ -2,6 +2,7 @@
 	background-repeat: no-repeat;
 	height: 100%;
 	background-position: bottom;
+    
 }
 
 .comingtitle {
@@ -198,5 +199,50 @@
     }
     to {
         transform: translate(-50%, -50%) rotateY( -45deg) rotateX( -80deg) rotateZ(-360deg);
+    }
+}
+@media (max-width: 1200px){
+    .imageleft{
+        width : 120px!important;
+        left : 50px!important;
+    }
+    .imageright{
+        width : 120px!important;
+        right : 50px!important;
+    }
+    
+}
+
+@media (max-width: 950px){
+    .imageleft{
+        display: none;
+    }
+    .imageright{
+        display: none;
+    }
+    .nfts{
+        width: fit-content!important;
+    }
+}
+
+@media (max-width: 650px){
+    .comingtitle
+    {
+        font-size: 45px!important;
+    }
+    .comming{
+        background-size:500px;
+    }
+    .countdown div {
+        width: 70px!important;
+        height: 70px!important;
+    }
+    .countdown h3{
+        margin-top: 0!important;
+        font-size: 30px!important;
+        line-height: 30px!important;
+    }
+    .countdown span{
+        margin-top: -10px!important;
     }
 }

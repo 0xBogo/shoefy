@@ -18,7 +18,7 @@
 }
 
 .navigation-wrapper #mainNav {
-	/* height: calc(100% - 84px) !important; */
+	/* height: 250px !important; */
 	transition: all 0.25s;
 }
 
@@ -184,7 +184,7 @@
 
 	.navigation-wrapper {
 		display: block;
-		position: fixed;
+		/* position: fixed; */
 		align-items: center;
 		width: 100%;
 		min-height: auto;
@@ -196,7 +196,6 @@
 
 	.navigation-wrapper .logo-wrapper .img-logo {
 		display: inline-block;
-		width: 150px;
 		margin: 5px;
 	}
 
@@ -223,7 +222,12 @@
 	}
 
 	#mainNav.collapse.show {
-		height: calc(100% - 84px) !important;
+		height: 250px !important;
+		width : calc(100% - 80px)!important;
+	}
+
+	.navigation-wrapper ul{
+		flex-direction: column!important;
 	}
 
 	.navigation-wrapper {
