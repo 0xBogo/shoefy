@@ -183,7 +183,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                 <div className="content-wrapper">
                     <div className="part_c">
                         <div className="comming" style={{backgroundImage:'url(images/Frame1342.png)'}}>
-                            <div style={{ width: '55%', margin: '0 auto', position: 'relative', paddingBottom: '100px'}}>
+                            <div style={{ width: '900px', margin: '0 auto', position: 'relative', paddingBottom: '100px'}} className = "nfts">
                             	<div className="image imageleft" style={{ width: "120px", position: "absolute", top: "80px", left: "50px" }}>
                                     <img src="/images/NFT-2.png" style={{ width: "100%" }} />
                                     <div className="star1">
