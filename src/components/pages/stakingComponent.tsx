@@ -514,7 +514,7 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 												<div className="infoitem">
 													<h2>{t('staking.your_info.staked')}</h2>
 													<AnimatedNumber
-														value={numeral(state.stakedBalance || 0).format('0.00')}
+														value={numeral(state.stakedBalance + state.stakedBalance2 || 0).format('0.00')}
 														duration="1000"
 														formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
 														className="staking-info"
