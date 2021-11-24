@@ -114,12 +114,13 @@
     height: 40px;
     border-radius: 5px;
     background-color: #B32B69;
-    width: 10%;
+    width: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 30px;
     margin-bottom: 100px;
+    cursor: pointer;
 }
 
 .ih_rtext1 {
@@ -127,8 +128,7 @@
     font-weight: bold;
     color: white;
     font-size: 14px;
-    background-color: #B32B69;
-    border-radius: 15px;
+    height: 100%;
 }
 
 @keyframes star1 {

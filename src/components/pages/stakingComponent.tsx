@@ -56,6 +56,7 @@ export type StakingState = {
 	ctValueStake?: number,
 	ctPercentageUnstake?: number,
 	ctValueUnstake?: number,
+	ctValueUnstake2?: number,
 	pending?: boolean,
 
 	approveFlag: boolean,
@@ -106,7 +107,9 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 	handleInputUnstake(event) {
 		this.setUnstakeValue(event.target.value);
 	}
-
+	handleInputUnstake2(event) {
+		this.setUnstakeValue2(event.target.value);
+	}
 	handleError(error) {
 		ShellErrorHandler.handle(error);
 	}
@@ -377,6 +380,18 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 		});
 	}
 
+	setUnStake2Percentage(percent) {
+		const r = this.readState().stakedBalance2;
+		if (!r) return;
+
+		const p = Math.max(0, Math.min(+(percent || 0), 100));
+		const v = Math.min(((r) * (p * 0.01)), (r * 1));
+
+		this.updateState({
+			ctValueUnstake2: v,
+		});
+	}
+
 	setStakeValue(value) {
 		const r = this.readState().shoefy;
 		if (!r) return;
@@ -407,6 +422,13 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 		const v = Math.max(0, value);
 		this.updateState({
 			ctValueUnstake: v,
+		});
+	}
+
+	setUnstakeValue2(value) {
+		const v = Math.max(0, value);
+		this.updateState({
+			ctValueUnstake2: v,
 		});
 	}
 
@@ -641,7 +663,7 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 																	<form id="staking-form">
 																		<div style={{ display: "flex", justifyContent: "space-between" }}>
 																			<label className="form-label">{t('staking.stake.amount')}</label>
-																			<label className="form-label">{Math.floor(state.locktime / 3600 / 24)} Days Left</label>
+																			
 																		</div>
 																		<div className="maxValue">
 																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputStake} value={state.ctValueStake || 0} />
@@ -660,10 +682,11 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 																	<form id="unstaking-form">
 																		<div style={{ display: "flex", justifyContent: "space-between" }}>
 																			<label className="form-label">{t('staking.unstake.amount')}</label>
-																			<label className="form-label">{Math.floor(state.locktime / 3600 / 24)} Days Left</label>
+																			
 																		</div>
 																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled value={state.stakedBalance2 || 0} onChange={() => { }} />
+																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event)=>this.handleInputUnstake2(event)} value={state.ctValueUnstake2 || 0} />
+																			<button className="btn btn-sm max-btn" onClick={() => this.setUnStake2Percentage(100)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.stakedBalance2 == 0 || state.locktime || state.pending} type="button" onClick={async () => this.confirmUnstake(0)}>{t('staking.unstake.title')}</button>
@@ -723,7 +746,7 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 																	<form id="staking-form">
 																		<div style={{ display: "flex", justifyContent: "space-between" }}>
 																			<label className="form-label">{t('staking.stake.amount')}</label>
-																			<label className="form-label">{Math.floor(state.locktime / 3600 / 24)} Days Left</label>
+																			
 																		</div>
 																		<div className="maxValue">
 																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputStake} value={state.ctValueStake || 0} />
@@ -742,10 +765,11 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 																	<form id="unstaking-form">
 																		<div style={{ display: "flex", justifyContent: "space-between" }}>
 																			<label className="form-label">{t('staking.unstake.amount')}</label>
-																			<label className="form-label">{Math.floor(state.locktime / 3600 / 24)} Days Left</label>
+																			
 																		</div>
 																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled value={state.stakedBalance2 || 0} onChange={() => { }} />
+																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event)=>this.handleInputUnstake2(event)} value={state.ctValueUnstake2 || 0} />
+																			<button className="btn btn-sm max-btn" onClick={() => this.setUnStake2Percentage(100)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.stakedBalance2 == 0 || state.locktime || state.pending} type="button" onClick={async () => this.confirmUnstake(0)}>{t('staking.unstake.title')}</button>
@@ -805,7 +829,7 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 																	<form id="staking-form">
 																		<div style={{ display: "flex", justifyContent: "space-between" }}>
 																			<label className="form-label">{t('staking.stake.amount')}</label>
-																			<label className="form-label">{Math.floor(state.locktime / 3600 / 24)} Days Left</label>
+																			
 																		</div>
 																		<div className="maxValue">
 																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputStake} value={state.ctValueStake || 0} />
@@ -824,10 +848,11 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 																	<form id="unstaking-form">
 																		<div style={{ display: "flex", justifyContent: "space-between" }}>
 																			<label className="form-label">{t('staking.unstake.amount')}</label>
-																			<label className="form-label">{Math.floor(state.locktime / 3600 / 24)} Days Left</label>
+																			
 																		</div>
 																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled value={state.stakedBalance2 || 0} onChange={() => { }} />
+																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event)=>this.handleInputUnstake2(event)} value={state.ctValueUnstake2 || 0} />
+																			<button className="btn btn-sm max-btn" onClick={() => this.setUnStake2Percentage(100)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.stakedBalance2 == 0 || state.locktime || state.pending} type="button" onClick={async () => this.confirmUnstake(0)}>{t('staking.unstake.title')}</button>
