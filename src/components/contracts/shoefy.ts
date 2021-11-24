@@ -22,6 +22,8 @@ export class Shoefy {
 	private _balance_eth: number = 0;
 	private _locktime: number = 0;
 	private _stake2: number = 0;
+	private _allowance : number = 0;
+	private _allowance2 : number = 0;
 
 	constructor(wallet: Wallet) {
 		this._wallet = wallet;
@@ -60,23 +62,23 @@ export class Shoefy {
 	get locktime(): number {
 		return this._locktime;
 	}
+	get allowance() : number{
+		return this._allowance
+	}
+	get allowance2() : number{
+		return this._allowance2
+	}
 	async approve(amount: number): Promise<void> {
-		if (this._balance >= amount) {
-			let flag = await this._shoeFyContract.methods.approve(StakingAddress, web3.toWei(String(amount), 'ether')).send({ 'from': this._wallet._address });
-			return flag;
-		} else {
-			throw 'Your shoefy balance is not sufficient to stake this amount';
-		}
+		let flag = await this._shoeFyContract.methods.approve(StakingAddress, amount).send({ 'from': this._wallet._address });
+		return flag;
+
 	}
 
 	async approve2(amount: any): Promise<void> {
 
-		if (this._balance >= amount) {
-			let flag = await this._shoeFyContract.methods.approve(Staking2Address, web3.toWei(String(amount), 'ether')).send({ 'from': this._wallet._address });
-			return flag
-		} else {
-			throw 'Your shoefy balance is not sufficient to stake this amount';
-		}
+		let flag = await this._shoeFyContract.methods.approve(Staking2Address, amount).send({ 'from': this._wallet._address });
+		return flag
+
 	}
 
 	async stake2(amount: number, stakestep: number): Promise<void> {
@@ -136,6 +138,9 @@ export class Shoefy {
 		this._stake2 = await this._staking2Contract.methods.getamount(this._wallet._address).call() / (10 ** 18);
 
 		this._locktime = await this._staking2Contract.methods.getlocktime(this._wallet._address).call() / 1;
+		this._allowance = await this._shoeFyContract.methods.allowance(this._wallet._address, StakingAddress).call() / (10 ** 18);
+		this._allowance2 = await this._shoeFyContract.methods.allowance(this._wallet._address, Staking2Address).call() / (10 ** 18);
+		console.log(this._allowance, this._allowance2);
 		// console.log('locktime', this._locktime);
 		// console.log('_apr', this._balance);
 	}

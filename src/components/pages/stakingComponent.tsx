@@ -50,6 +50,8 @@ export type StakingState = {
 	locktime?: number,
 	pendingRewards?: number,
 	apr?: number,
+	allowance : number,
+	allowance2 : number,
 
 	// values pending to be set
 	ctPercentageStake?: number,
@@ -211,9 +213,9 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 	async confirmApprove(step): Promise<void> {
 		try {
 			const state = this.readState();
-			const temp = state.ctValueStake;
 			this.updateState({ pending: true });
 			let flag;
+			let temp = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
 			if (step >= 0) {
 				flag = await state.shoefy.approve2(temp);
 				this.updateState({ pending: false, approveFlag1: flag.status });
@@ -270,6 +272,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 						balance: shoefy.balance,
 						stakedBalance: shoefy.stakedBalance,
 						stakedBalance2: shoefy.stakedBalance2,
+						allowance : shoefy.allowance,
+						allowance2 : shoefy.allowance2,
 						locktime: shoefy.locktime,
 						pendingRewards: shoefy.pendingStakeRewards,
 						apr: shoefy.apr
@@ -280,6 +284,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 						balance: shoefy.balance,
 						stakedBalance: shoefy.stakedBalance,
 						stakedBalance2: shoefy.stakedBalance2,
+						allowance : shoefy.allowance,
+						allowance2 : shoefy.allowance2,
 						locktime: shoefy.locktime,
 						pendingRewards: shoefy.pendingStakeRewards,
 						apr: shoefy.apr
@@ -586,9 +592,9 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
-																				this.state.approveFlag ?
+																				this.state.allowance >= this.state.stakedBalance ?
 																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(-1)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmApprove(-1)}>Approve</button>
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} type="button" onClick={async () => this.confirmApprove(-1)}>Approve</button>
 																			}
 																		</div>
 																	</form>
@@ -668,9 +674,9 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
-																				this.state.approveFlag1 ?
+																				this.state.allowance2 >= this.state.stakedBalance2 ?
 																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.locktime || state.stakedBalance2 || state.pending} type="button" onClick={async () => this.confirmStake(0)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.pending} type="button" onClick={async () => this.confirmApprove(0)}>Approve</button>
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }}  type="button" onClick={async () => this.confirmApprove(0)}>Approve</button>
 																			}
 																		</div>
 																	</form>
@@ -753,9 +759,9 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
-																				this.state.approveFlag1 ?
+																				this.state.allowance2 >= this.state.stakedBalance2 ?
 																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.locktime || state.stakedBalance2 || state.pending} type="button" onClick={async () => this.confirmStake(1)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.pending} type="button" onClick={async () => this.confirmApprove(1)}>Approve</button>
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }}  type="button" onClick={async () => this.confirmApprove(1)}>Approve</button>
 																			}
 																		</div>
 																	</form>
@@ -838,9 +844,9 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
-																				this.state.approveFlag1 ?
+																				this.state.allowance2 >= this.state.stakedBalance2 ?
 																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.locktime || state.stakedBalance2 || state.pending} type="button" onClick={async () => this.confirmStake(2)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.pending} type="button" onClick={async () => this.confirmApprove(2)}>Approve</button>
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }}  type="button" onClick={async () => this.confirmApprove(2)}>Approve</button>
 																			}
 																		</div>
 																	</form>
