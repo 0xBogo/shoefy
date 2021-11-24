@@ -168,11 +168,9 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 	async confirmUnstake(step): Promise<void> {
 		try {
 			const state = this.readState();
-			alert(state.ctValueUnstake);
 			this.updateState({ pending: true });
 
 			if (Number(state.ctValueUnstake) >= 0) {
-				alert(state.ctValueUnstake);
 				if (step === -1)
 					await state.shoefy.unstakeAndClaim(state.ctValueUnstake);
 				else

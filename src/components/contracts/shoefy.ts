@@ -62,7 +62,8 @@ export class Shoefy {
 	}
 	async approve(amount: number): Promise<void> {
 		if (this._balance >= amount) {
-			await this._shoeFyContract.methods.approve(StakingAddress, web3.toWei(String(amount), 'ether')).send({ 'from': this._wallet._address });
+			let flag = await this._shoeFyContract.methods.approve(StakingAddress, web3.toWei(String(amount), 'ether')).send({ 'from': this._wallet._address });
+			return flag;
 		} else {
 			throw 'Your shoefy balance is not sufficient to stake this amount';
 		}
