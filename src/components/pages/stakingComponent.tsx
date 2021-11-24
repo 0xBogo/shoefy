@@ -615,7 +615,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																	<form id="unstaking-form">
 																		<div style={{ display: "flex", }}>
 																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Total Rewards</label>
-																			<h1 className="form-label total-amount">0.00</h1>
+																			<h1 className="form-label total-amount">{this.state.pendingRewards}</h1>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#B1B5C3", color: 'white' }} type="button" onClick={async () => this.confirmClaim()}>Claim</button>
