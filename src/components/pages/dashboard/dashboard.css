@@ -123,13 +123,7 @@
     cursor: pointer;
 }
 
-.ih_rtext1 {
-    font-family: 'Lato', sans-serif;
-    font-weight: bold;
-    color: white;
-    font-size: 14px;
-    height: 100%;
-}
+
 
 @keyframes star1 {
     from {

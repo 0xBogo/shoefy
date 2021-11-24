@@ -639,7 +639,7 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 													</div>
 													<div className="stake1">
 														<div className="s2_up">APR</div>
-														<div className="s2_down">{state.apr}%</div>
+														<div className="s2_down">275%</div>
 													</div>
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
@@ -722,7 +722,7 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 													</div>
 													<div className="stake1">
 														<div className="s2_up">APR</div>
-														<div className="s2_down">{state.apr}%</div>
+														<div className="s2_down">350%</div>
 													</div>
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
@@ -805,7 +805,7 @@ console.log(this.state.stakedBalance2, this.state.locktime);
 													</div>
 													<div className="stake1">
 														<div className="s2_up">APR</div>
-														<div className="s2_down">{state.apr}%</div>
+														<div className="s2_down">500%</div>
 													</div>
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
