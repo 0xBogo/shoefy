@@ -7,7 +7,8 @@ export const ShoeFyAddress = "0x4c687a9158F31321aD76eC7185C458201B375582";
 export const StakingAddress = "0x785c56379f11cceca0a7d8bcd94841dd5fcd1e17";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
 // export const Staking2Address = "0x4f4E5ff85C939b502EdC5B57ea0FC99694ebB1B4";
-export const Staking2Address = "0xcd95208a4c31db6c8e4d6fc3f2341d096e2e4365";
+export const Staking2Address = "0xf8452cfd0aba8af29f9b7286ec0a2361550bead0";
+// export const Staking2Address = "0xd03daccca505d8ff07051a039bc218608b81e253";
 
 export class Shoefy {
 	private readonly _wallet: Wallet;
@@ -18,12 +19,14 @@ export class Shoefy {
 	private _balance: number = 0;
 	private _stake: number = 0;
 	private _pendingRewards: number = 0;
+	private _pendingRewards2: Array = [];
 	private _apr: number = 0;
 	private _balance_eth: number = 0;
 	private _locktime: number = 0;
-	private _stake2: number = 0;
-	private _allowance : number = 0;
-	private _allowance2 : number = 0;
+	private _stake2: Array = [];
+	private _unstake2: Array = [];
+	private _allowance: number = 0;
+	private _allowance2: number = 0;
 
 	constructor(wallet: Wallet) {
 		this._wallet = wallet;
@@ -50,9 +53,7 @@ export class Shoefy {
 	get stakedBalance(): number {
 		return this._stake;
 	}
-	get stakedBalance2(): number {
-		return this._stake2;
-	}
+
 	get pendingStakeRewards(): number {
 		return this._pendingRewards;
 	}
@@ -62,11 +63,20 @@ export class Shoefy {
 	get locktime(): number {
 		return this._locktime;
 	}
-	get allowance() : number{
+	get allowance(): number {
 		return this._allowance
 	}
-	get allowance2() : number{
+	get allowance2(): number {
 		return this._allowance2
+	}
+	get stakedBalance2(): Array {
+		return this._stake2;
+	}
+	get pendingRewards2(): Array {
+		return this._pendingRewards2;
+	}
+	get unstakeBlanace2(): Array {
+		return this._unstake2;
 	}
 	async approve(amount: number): Promise<void> {
 		let flag = await this._shoeFyContract.methods.approve(StakingAddress, amount).send({ 'from': this._wallet._address });
@@ -109,10 +119,11 @@ export class Shoefy {
 			throw 'Your staked shoefy balance is not sufficient to unstake this amount';
 		}
 	}
-	async withdraw(amount: number): Promise<void> {
+	async withdraw(step: number): Promise<void> {
+		const rates = [275, 350, 500];
 		// alert(amount);
 		// if (amount > 0) {
-		await this._staking2Contract.methods.withdraw().send({ 'from': this._wallet._address });
+		await this._staking2Contract.methods.withdraw(rates[step]).send({ 'from': this._wallet._address });
 		// }
 		// else {
 		// throw 'Your staked shoefy balance is not sufficient to unstake this amount';
@@ -135,12 +146,22 @@ export class Shoefy {
 		this._stake = await this._stakingContract.methods.stakedBalanceOf(this._wallet._address).call() / (10 ** 18);
 		this._pendingRewards = await this._stakingContract.methods.pendingRewards(this._wallet._address).call() / (10 ** 18);
 		this._apr = await this._stakingContract.methods.getCurrentAPR().call() / 100;
-		this._stake2 = await this._staking2Contract.methods.getamount(this._wallet._address).call() / (10 ** 18);
 
-		this._locktime = await this._staking2Contract.methods.getlocktime(this._wallet._address).call() / 1;
 		this._allowance = await this._shoeFyContract.methods.allowance(this._wallet._address, StakingAddress).call() / (10 ** 18);
 		this._allowance2 = await this._shoeFyContract.methods.allowance(this._wallet._address, Staking2Address).call() / (10 ** 18);
-		console.log(this._allowance, this._allowance2);
+
+		const dates = [30, 60, 90];
+		const rates = [275, 350, 500];
+
+		for (let i = 0; i < 3; i++) {
+			const temp = await this._staking2Contract.methods.getvalidamount(this._wallet._address, rates[i]).call();
+			const temp1 = await this._staking2Contract.methods.getstakeamount(this._wallet._address, rates[i]).call();
+			const a = dates[i] * rates[i] / 365;
+			this._stake2[i] = temp1 / Math.pow(10, 18);
+			this._unstake2[i] = temp / Math.pow(10, 18);
+			this._pendingRewards2[i] = temp1 / (a + 1) * a / Math.pow(10, 18);
+		}
+		console.log(this._unstake2[0], this._unstake2[1], this._unstake2[2])
 		// console.log('locktime', this._locktime);
 		// console.log('_apr', this._balance);
 	}
