@@ -44,26 +44,26 @@ export type StakingState = {
 	// actual set values
 	address?: string,
 	balance?: number,
-	balance_eth?: number,
 	stakedBalance?: number,
-	stakedBalance2?: number,
-	locktime?: number,
+	stakedBalance2?: Array,
 	pendingRewards?: number,
+	pendingRewards2?: Array,
+	unstakeBlanace2?: Array,
+
 	apr?: number,
-	allowance : number,
-	allowance2 : number,
+	allowance: number,
+	allowance2: number,
 
 	// values pending to be set
 	ctPercentageStake?: number,
 	ctValueStake?: number,
-	ctValueStake2?: number,
+	ctValueStake2?: Array,
 	ctPercentageUnstake?: number,
 	ctValueUnstake?: number,
-	ctValueUnstake2?: number,
+	ctValueUnstake2?: Array,
 	pending?: boolean,
 
 	approveFlag: boolean,
-	approveFlag1: boolean
 };
 
 const FadeInLeftAnimation = keyframes`${fadeInLeft}`;
@@ -105,13 +105,16 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		this.setUnstakePercentage(event.target.value);
 	}
 	handleInputStake(type, event) {
+		let temp = event.target.value.toString();
+		if (temp[0] === '0')
+			event.target.value = temp.slice(1, temp.length);
 		this.setStakeValue(type, event.target.value);
 	}
 	handleInputUnstake(event) {
+		let temp = event.target.value.toString();
+		if (temp[0] === '0')
+			event.target.value = temp.slice(1, temp.length);
 		this.setUnstakeValue(event.target.value);
-	}
-	handleInputUnstake2(event) {
-		this.setUnstakeValue2(event.target.value);
 	}
 	handleError(error) {
 		ShellErrorHandler.handle(error);
@@ -124,10 +127,9 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 				this.updateState({ pending: true });
 
-				if (state.ctValueStake >= 0) {
-					console.log("ctVa:", state.ctValueStake);
-					await state.shoefy.stake2(state.ctValueStake, step);
-
+				if (state.ctValueStake2[step] >= 0) {
+					console.log("ctVa:", state.ctValueStake2[step]);
+					await state.shoefy.stake2(state.ctValueStake2[step], step);
 					document.getElementById('modalswitch2').click();
 				}
 				else {
@@ -177,7 +179,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 				if (step === -1)
 					await state.shoefy.unstakeAndClaim(state.ctValueUnstake);
 				else
-					await state.shoefy.withdraw(state.ctValueUnstake);
+					await state.shoefy.withdraw(step);
 				document.getElementById('modalswitch3').click();
 			}
 			else {
@@ -265,18 +267,20 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 					this.updateState({
 						ctPercentageStake: 0,
 						ctValueStake: 0,
-						ctValueStake2: 0,
+						ctValueStake2: [],
 						ctPercentageUnstake: 0,
 						ctValueUnstake: 0,
+						ctValueUnstake2 : [],
 						address: this.props.wallet._address,
 						balance: shoefy.balance,
 						stakedBalance: shoefy.stakedBalance,
 						stakedBalance2: shoefy.stakedBalance2,
-						allowance : shoefy.allowance,
-						allowance2 : shoefy.allowance2,
-						locktime: shoefy.locktime,
+						allowance: shoefy.allowance,
+						allowance2: shoefy.allowance2,
 						pendingRewards: shoefy.pendingStakeRewards,
-						apr: shoefy.apr
+						pendingRewards2: shoefy.pendingRewards2,
+						unstakeBlanace2: shoefy.unstakeBlanace2,
+						apr: shoefy.apr,
 					})
 				} else {
 					this.updateState({
@@ -284,14 +288,12 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 						balance: shoefy.balance,
 						stakedBalance: shoefy.stakedBalance,
 						stakedBalance2: shoefy.stakedBalance2,
-						allowance : shoefy.allowance,
-						allowance2 : shoefy.allowance2,
-						locktime: shoefy.locktime,
+						allowance: shoefy.allowance,
+						allowance2: shoefy.allowance2,
 						pendingRewards: shoefy.pendingStakeRewards,
 						apr: shoefy.apr
 					});
 				}
-				console.log(this.state.stakedBalance2, this.state.locktime);
 			}
 			catch (e) {
 				console.warn('Unable to update staking status', e);
@@ -358,22 +360,13 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		}
 	}
 
-	setStakePercentage(type, percent) {
+	setStakePercentage(step, percent) {
 		const r = this.readState().shoefy;
 		if (!r) return;
 
 		const p = Math.max(0, Math.min(+(percent || 0), 100));
 		const v = Math.min(((r.balance) * (p * 0.01)), (r.balance * 1));
-		if (type == 1)
-			this.updateState({
-				ctPercentageStake: p,
-				ctValueStake: v,
-			});
-		if (type == 2)
-			this.updateState({
-				ctPercentageStake: p,
-				ctValueStake2: v,
-			});
+		this.setStakeValue(step, v);
 	}
 
 	setUnStakePercentage(percent) {
@@ -388,48 +381,39 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 		});
 	}
 
-	setUnStake2Percentage(percent) {
-		const r = this.readState().stakedBalance2;
-		if (!r) return;
-
-		const p = Math.max(0, Math.min(+(percent || 0), 100));
-		const v = Math.min(((r) * (p * 0.01)), (r * 1));
-
-		this.updateState({
-			ctValueUnstake2: v,
-		});
+	setUnstake2Max(step) {
+		let temp = this.readState().ctValueUnstake2;
+		temp[step] = this.readState().unstakeBlanace2[step];
+		this.updateState({ ctValueUnstake2: temp });
 	}
 
-	setStakeValue(type, value) {
+	setStakeValue(step, value) {
 		const r = this.readState().shoefy;
 		if (!r) return;
 
 		const t = r.balance;
 		const v = Math.max(0, Math.min(+(value || 0), r.balance));
-		if (type == 1)
+		if (step == -1)
 			this.updateState({
 				ctPercentageStake: Math.floor(100 * v / t),
 				ctValueStake: v,
 			});
-		if (type == 2)
+		else {
+			const temp = this.readState().ctValueStake2;
+
+			temp[step] = v;
 			this.updateState({
 				ctPercentageStake: Math.floor(100 * v / t),
-				ctValueStake2: v,
+				ctValueStake2: temp,
 			});
+			console.log(this.readState().ctValueStake2[0], this.readState().ctValueStake2[1]);
+		}
+
 	}
-
-
 	setUnstakeValue(value) {
-		const v = Math.max(0, value);
+		const v = Math.max(0, Math.min(+(value || 0), this.readState().stakedBalance));
 		this.updateState({
 			ctValueUnstake: v,
-		});
-	}
-
-	setUnstakeValue2(value) {
-		const v = Math.max(0, value);
-		this.updateState({
-			ctValueUnstake2: v,
 		});
 	}
 
@@ -517,7 +501,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 												<div className="infoitem">
 													<h2>{t('staking.your_info.staked')}</h2>
 													<AnimatedNumber
-														value={numeral(state.stakedBalance + state.stakedBalance2 || 0).format('0.00')}
+														value={numeral(state.stakedBalance + (state.stakedBalance2 ? state.stakedBalance2[0] + state.stakedBalance2[1] + state.stakedBalance2[2] : 0) || 0).format('0.00')}
 														duration="1000"
 														formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
 														className="staking-info"
@@ -528,7 +512,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 												<div className="infoitem">
 													<h2>{t('staking.your_info.pending_rewards')}</h2>
 													<AnimatedNumber
-														value={numeral(state.pendingRewards || 0).format('0.00')}
+														value={numeral(state.pendingRewards + (state.pendingRewards2 ? state.pendingRewards2[0] + state.pendingRewards2[1] + state.pendingRewards2[2] : 0) || 0).format('0.00')}
 														duration="1000"
 														formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
 														className="staking-info"
@@ -587,8 +571,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																	<form id="staking-form">
 																		<label className="form-label">{t('staking.stake.amount')}</label>
 																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputStake(1, event)} value={state.ctValueStake || 0} />
-																			<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(1, 100)} type="button">MAX</button>
+																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputStake(-1, event)} value={state.ctValueStake || 0} />
+																			<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(-1, 100)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
@@ -669,14 +653,14 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 																		</div>
 																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputStake(2, event)} value={state.ctValueStake2 || 0} />
-																			<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(2, 100)} type="button">MAX</button>
+																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputStake(0, event)} value={state.ctValueStake2 && state.ctValueStake2[0] || 0} />
+																			<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(0, 100)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
 																				this.state.allowance2 >= this.state.balance ?
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.locktime || state.stakedBalance2 || state.pending} type="button" onClick={async () => this.confirmStake(0)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }}  type="button" onClick={async () => this.confirmApprove(0)}>Approve</button>
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(0)}>Stake</button> :
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} type="button" onClick={async () => this.confirmApprove(0)}>Approve</button>
 																			}
 																		</div>
 																	</form>
@@ -688,11 +672,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 																		</div>
 																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputUnstake2(event)} value={state.ctValueUnstake2 || 0} />
-																			<button className="btn btn-sm max-btn" onClick={() => this.setUnStake2Percentage(100)} type="button">MAX</button>
+																			<input type="number" className="form-control form-control-lg" disabled onChange={() => { }} value={state.ctValueUnstake2 && state.ctValueUnstake2[0] || 0} />
+																			<button className="btn btn-sm max-btn" onClick={() => this.setUnstake2Max(0)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
-																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.stakedBalance2 == 0 || state.locktime || state.pending} type="button" onClick={async () => this.confirmUnstake(0)}>{t('staking.unstake.title')}</button>
+																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={(state.ctValueUnstake2 ? !state.ctValueUnstake2[0] : 1) || state.pending} type="button" onClick={async () => this.confirmUnstake(0)}>{t('staking.unstake.title')}</button>
 																		</div>
 																	</form>
 																</div>
@@ -700,7 +684,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																	<form id="unstaking-form">
 																		<div style={{ display: "flex" }}>
 																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Total Rewards</label>
-																			<h1 className="form-label total-amount">0.00</h1>
+																			<h1 className="form-label total-amount">{state.pendingRewards2 && (state.pendingRewards2[0] ? state.pendingRewards2[0] : "0.00")}</h1>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{/*<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>*/}
@@ -754,14 +738,14 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 																		</div>
 																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputStake(2, event)} value={state.ctValueStake2 || 0} />
-																			<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(2, 100)} type="button">MAX</button>
+																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputStake(1, event)} value={state.ctValueStake2 && state.ctValueStake2[1] || 0} />
+																			<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(1, 100)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
 																				this.state.allowance2 >= this.state.balance ?
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.locktime || state.stakedBalance2 || state.pending} type="button" onClick={async () => this.confirmStake(1)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }}  type="button" onClick={async () => this.confirmApprove(1)}>Approve</button>
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(1)}>Stake</button> :
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} type="button" onClick={async () => this.confirmApprove(1)}>Approve</button>
 																			}
 																		</div>
 																	</form>
@@ -773,11 +757,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 																		</div>
 																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputUnstake2(event)} value={state.ctValueUnstake2 || 0} />
-																			<button className="btn btn-sm max-btn" onClick={() => this.setUnStake2Percentage(100)} type="button">MAX</button>
+																			<input type="number" className="form-control form-control-lg" disabled onChange={() => { }} value={state.ctValueUnstake2 && state.ctValueUnstake2[1] || 0} />
+																			<button className="btn btn-sm max-btn" onClick={() => this.setUnstake2Max(1)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
-																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.stakedBalance2 == 0 || state.locktime || state.pending} type="button" onClick={async () => this.confirmUnstake(0)}>{t('staking.unstake.title')}</button>
+																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={(state.ctValueUnstake2 ? !state.ctValueUnstake2[1] : 1) || state.pending} type="button" onClick={async () => this.confirmUnstake(0)}>{t('staking.unstake.title')}</button>
 																		</div>
 																	</form>
 																</div>
@@ -785,7 +769,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																	<form id="unstaking-form">
 																		<div style={{ display: "flex" }}>
 																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Total Rewards</label>
-																			<h1 className="form-label total-amount">0.00</h1>
+																			<h1 className="form-label total-amount">{state.pendingRewards2 && (state.pendingRewards2[1] ? state.pendingRewards2[1] : "0.00")}</h1>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{/*<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>*/}
@@ -839,14 +823,14 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 																		</div>
 																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputStake(2, event)} value={state.ctValueStake2 || 0} />
+																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputStake(2, event)} value={state.ctValueStake2 && state.ctValueStake2[2] || 0} />
 																			<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(2, 100)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
 																				this.state.allowance2 >= this.state.balance ?
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.locktime || state.stakedBalance2 || state.pending} type="button" onClick={async () => this.confirmStake(2)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }}  type="button" onClick={async () => this.confirmApprove(2)}>Approve</button>
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(2)}>Stake</button> :
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} type="button" onClick={async () => this.confirmApprove(2)}>Approve</button>
 																			}
 																		</div>
 																	</form>
@@ -858,11 +842,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 																		</div>
 																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputUnstake2(event)} value={state.ctValueUnstake2 || 0} />
-																			<button className="btn btn-sm max-btn" onClick={() => this.setUnStake2Percentage(100)} type="button">MAX</button>
+																			<input type="number" className="form-control form-control-lg" disabled onChange={() => { }} value={state.ctValueUnstake2 && state.ctValueUnstake2[2] || 0}/>
+																			<button className="btn btn-sm max-btn" onClick={() => this.setUnstake2Max(2)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
-																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.stakedBalance2 == 0 || state.locktime || state.pending} type="button" onClick={async () => this.confirmUnstake(0)}>{t('staking.unstake.title')}</button>
+																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={(state.ctValueUnstake2 ? !state.ctValueUnstake2[2] : 1) || state.pending} type="button" onClick={async () => this.confirmUnstake(0)}>{t('staking.unstake.title')}</button>
 																		</div>
 																	</form>
 																</div>
@@ -870,7 +854,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																	<form id="unstaking-form">
 																		<div style={{ display: "flex" }}>
 																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Total Rewards</label>
-																			<h1 className="form-label total-amount">0.00</h1>
+																			<h1 className="form-label total-amount">{state.pendingRewards2 && (state.pendingRewards2[2] ? state.pendingRewards2[2] : "0.00")}</h1>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{/*<button className="btn btn-md link-dark" style={{width: '100%', backgroundColor: "#B1B5C3", color: 'white'}} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake()}>Claim</button>*/}
