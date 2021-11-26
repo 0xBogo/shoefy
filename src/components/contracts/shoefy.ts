@@ -7,7 +7,7 @@ export const ShoeFyAddress = "0x4c687a9158F31321aD76eC7185C458201B375582";
 export const StakingAddress = "0x785c56379f11cceca0a7d8bcd94841dd5fcd1e17";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
 // export const Staking2Address = "0x4f4E5ff85C939b502EdC5B57ea0FC99694ebB1B4";
-export const Staking2Address = "0xf8452cfd0aba8af29f9b7286ec0a2361550bead0";
+export const Staking2Address = "0xa11d2a69ceabe2ccf24af74501d2834341b446d1";
 // export const Staking2Address = "0xd03daccca505d8ff07051a039bc218608b81e253";
 
 export class Shoefy {
@@ -156,7 +156,7 @@ export class Shoefy {
 		for (let i = 0; i < 3; i++) {
 			const temp = await this._staking2Contract.methods.getvalidamount(this._wallet._address, rates[i]).call();
 			const temp1 = await this._staking2Contract.methods.getstakeamount(this._wallet._address, rates[i]).call();
-			const a = dates[i] * rates[i] / 365;
+			const a = dates[i] * rates[i] / 365 / 100;
 			this._stake2[i] = temp1 / Math.pow(10, 18);
 			this._unstake2[i] = temp / Math.pow(10, 18);
 			this._pendingRewards2[i] = temp1 / (a + 1) * a / Math.pow(10, 18);
