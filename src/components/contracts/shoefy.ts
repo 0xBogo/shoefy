@@ -158,7 +158,7 @@ export class Shoefy {
 			const rate = dates[i] * rates[i] / 365 / 100;
 			this._stake2[i] = amounts[0][i] / (rate + 1) / Math.pow(10, 18);
 			this._unstake2[i] = amounts[1][i] / Math.pow(10, 18);
-			this._pendingRewards2[i] = amounts[2][i] / (rate + 1) * rate / Math.pow(10, 18);
+			this._pendingRewards2[i] = amounts[0][i] / (rate + 1) * rate / Math.pow(10, 18);
 		}
 	}
 }
