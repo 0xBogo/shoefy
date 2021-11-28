@@ -14,17 +14,12 @@ import AnimatedNumber from 'animated-number-react';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 
-import SearchIcon from '@mui/icons-material/Search';
-import SettingsIcon from '@mui/icons-material/Settings';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import './stakingComponent.css';
 
 import mark_circle from "../../images/mark_circle.png"
 import down from "../../images/down.png"
 
 import mark from '../../../src/images/mark.png';
-import mark1 from '../../../src/images/mark1.png';
-import FoxImg from '../../images/fox.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
@@ -48,6 +43,9 @@ export type StakingState = {
 	stakedBalance2?: Array,
 	pendingRewards?: number,
 	pendingRewards2?: Array,
+	claimedRewards?: number,
+	claimedRewards2?: Array,
+	lockedBalance2?: number;
 	unstakeBlanace2?: Array,
 
 	apr?: number,
@@ -273,12 +271,15 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 						ctValueUnstake2: [],
 						address: this.props.wallet._address,
 						balance: shoefy.balance,
+						claimedRewards: shoefy.claimRewards,
 						stakedBalance: shoefy.stakedBalance,
 						stakedBalance2: shoefy.stakedBalance2,
 						allowance: shoefy.allowance,
 						allowance2: shoefy.allowance2,
 						pendingRewards: shoefy.pendingStakeRewards,
 						pendingRewards2: shoefy.pendingRewards2,
+						claimedRewards2: shoefy.claimedRewards2,
+						lockedBalance2: shoefy.lockedBalance2,
 						unstakeBlanace2: shoefy.unstakeBlanace2,
 						apr: shoefy.apr,
 					})
@@ -509,6 +510,31 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 														0 ShoeFy
 													</AnimatedNumber>
 												</div>
+
+												<div className="infoitem">
+													<h2>{t('staking.your_info.claimed')}</h2>
+													<AnimatedNumber
+														value={numeral(state.claimedRewards + (state.claimedRewards2 ? state.claimedRewards2[0] + state.claimedRewards2[1] + state.claimedRewards2[2] : 0) || 0).format('0.00')}
+														duration="1000"
+														formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
+														className="staking-info"
+													>
+														0 ShoeFy
+													</AnimatedNumber>
+												</div>
+
+												<div className="infoitem">
+													<h2>{t('staking.your_info.locked')}</h2>
+													<AnimatedNumber
+														value={numeral(state.lockedBalance2 ? state.lockedBalance2 : 0).format('0.00')}
+														duration="1000"
+														formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
+														className="staking-info"
+													>
+														0 ShoeFy
+													</AnimatedNumber>
+												</div>
+
 												<div className="infoitem">
 													<h2>{t('staking.your_info.pending_rewards')}</h2>
 													<AnimatedNumber
@@ -536,7 +562,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 														<div className="s2_down" style={{ width: "150px" }}>Flexible Time</div>
 													</div>
 													<div className="stake1">
-														<div className="s2_up">APR</div>
+														<div className="s2_up">APY</div>
+														<div className="s2_down">{state.apr}%</div>
+													</div>
+													<div className="stake1">
+														<div className="s2_up">Actual APR</div>
 														<div className="s2_down">{state.apr}%</div>
 													</div>
 													<div className="stake2">
@@ -611,7 +641,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 														<div className="s2_down" >Static Time (30days)</div>
 													</div>
 													<div className="stake1">
-														<div className="s2_up">APR</div>
+														<div className="s2_up">APY</div>
+														<div className="s2_down">275%</div>
+													</div>
+													<div className="stake1">
+														<div className="s2_up">Actual APR</div>
 														<div className="s2_down">22.60%</div>
 													</div>
 													<div className="stake2">
@@ -692,7 +726,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 														<div className="s2_down" >Static Time (60days)</div>
 													</div>
 													<div className="stake1">
-														<div className="s2_up">APR</div>
+														<div className="s2_up">APY</div>
+														<div className="s2_down">350%</div>
+													</div>
+													<div className="stake1">
+														<div className="s2_up">Actual APR</div>
 														<div className="s2_down">57.53%</div>
 													</div>
 													<div className="stake2">
@@ -773,7 +811,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 														<div className="s2_down" >Static Time (90days)</div>
 													</div>
 													<div className="stake1">
-														<div className="s2_up">APR</div>
+														<div className="s2_up">APY</div>
+														<div className="s2_down">500%</div>
+													</div>
+													<div className="stake1">
+														<div className="s2_up">Actual APR</div>
 														<div className="s2_down">123.29%</div>
 													</div>
 													<div className="stake2">

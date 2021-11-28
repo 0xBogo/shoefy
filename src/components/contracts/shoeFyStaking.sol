@@ -342,6 +342,7 @@ contract ShoeFyStaking is Ownable {
     mapping(address => mapping(address => uint)) public allowed;
     mapping(address => uint256) private currentReward;
     mapping(address => uint256) private lastPendingReward;
+    mapping(address => uint256) private claimRewards;
     
     address private liquidityLocker = 0x000000000000000000000000000000000000dEaD;
     address private daoTreasury = 0x000000000000000000000000000000000000dEaD;
@@ -512,11 +513,17 @@ contract ShoeFyStaking is Ownable {
 	function _claimEarnings(address _guy) internal {
 		require(_hasStaked[_guy], "Hmm... empty. Normal, you shall stake-in first !");
         // shoeFy.safeApprove(_guy, pendingRewards(_guy));
-		shoeFy.safeTransfer(_guy, pendingRewards(_guy));
-		emit Transfer(address(this), _guy, pendingRewards(_guy));
+        uint256 pendingrewards = pendingRewards(_guy);
+        claimRewards[_guy] += pendingrewards;
+		shoeFy.safeTransfer(_guy, pendingrewards);
+		emit Transfer(address(this), _guy, pendingrewards);
 		lastClaim[_guy] = block.timestamp;
 		lastPendingReward[_guy] = 0;
 	}
+
+    function getClaimRewards(address _guy) public view returns (uint256) {
+        return claimRewards[_guy];
+    }
 
 	function pendingRewards(address _guy) public view returns (uint256) {
 		return lastPendingReward[_guy] + (allowed[address(this)][_guy]*userApr[_guy]*(block.timestamp - lastClaim[_guy]))/315360000000;

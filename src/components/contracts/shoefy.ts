@@ -4,11 +4,11 @@ import { Contract } from 'web3-eth-contract';
 import * as web3 from 'web3-utils';
 import Web3 from 'web3';
 export const ShoeFyAddress = "0x4c687a9158F31321aD76eC7185C458201B375582";
-export const StakingAddress = "0x785c56379f11cceca0a7d8bcd94841dd5fcd1e17";
+export const StakingAddress = "0x86bdb4ea03f1b5158229c8fd15dca51310dc4661";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
 // export const Staking2Address = "0x4f4E5ff85C939b502EdC5B57ea0FC99694ebB1B4";
+// export const Staking2Address = "0x454f7d16d6a50c2e7e3474c19e76d88a868722ad";
 export const Staking2Address = "0x1a2d844dafaca5c2987f016c269092f2392ea26b";
-// export const Staking2Address = "0xe6e59e922069e73d11d6e2c7046bab173f70e996";
 
 export class Shoefy {
 	private readonly _wallet: Wallet;
@@ -18,8 +18,11 @@ export class Shoefy {
 
 	private _balance: number = 0;
 	private _stake: number = 0;
+	private _claimRewards: numeber = 0;
 	private _pendingRewards: number = 0;
 	private _pendingRewards2: Array = [];
+	private _claimedRewards2: Array = [];
+	private _lockedBalance2: number = 0;
 	private _apr: number = 0;
 	private _balance_eth: number = 0;
 	private _locktime: number = 0;
@@ -57,6 +60,9 @@ export class Shoefy {
 	get pendingStakeRewards(): number {
 		return this._pendingRewards;
 	}
+	get claimRewards() : number {
+		return this._claimRewards;
+	}
 	get apr(): number {
 		return this._apr;
 	}
@@ -74,6 +80,12 @@ export class Shoefy {
 	}
 	get pendingRewards2(): Array {
 		return this._pendingRewards2;
+	}
+	get claimedRewards2(): Array {
+		return this._claimedRewards2;
+	}
+	get lockedBalance2(): number {
+		return this._lockedBalance2;
 	}
 	get unstakeBlanace2(): Array {
 		return this._unstake2;
@@ -146,6 +158,7 @@ export class Shoefy {
 		this._stake = await this._stakingContract.methods.stakedBalanceOf(this._wallet._address).call() / (10 ** 18);
 		this._pendingRewards = await this._stakingContract.methods.pendingRewards(this._wallet._address).call() / (10 ** 18);
 		this._apr = await this._stakingContract.methods.getCurrentAPR().call() / 100;
+		this._claimRewards = await this._stakingContract.methods.getClaimRewards(this._wallet._address).call() / Math.pow(10, 18);
 
 		this._allowance = await this._shoeFyContract.methods.allowance(this._wallet._address, StakingAddress).call() / (10 ** 18);
 		this._allowance2 = await this._shoeFyContract.methods.allowance(this._wallet._address, Staking2Address).call() / (10 ** 18);
@@ -153,12 +166,15 @@ export class Shoefy {
 		const dates = [30, 60, 90];
 		const rates = [275, 350, 500];
 		const amounts = await this._staking2Contract.methods.getAmounts(this._wallet._address).call();
-		console.log(amounts);
+		this._lockedBalance2 = 0;
 		for (let i = 0; i < 3; i++) {
 			const rate = dates[i] * rates[i] / 365 / 100;
 			this._stake2[i] = amounts[0][i] / (rate + 1) / Math.pow(10, 18);
 			this._unstake2[i] = amounts[1][i] / Math.pow(10, 18);
 			this._pendingRewards2[i] = amounts[0][i] / (rate + 1) * rate / Math.pow(10, 18);
+			this._claimedRewards2[i] = amounts[2][i] / (rate + 1) * rate / Math.pow(10, 18);
+			this._lockedBalance2 += (amounts[0][i] - amounts[1][i]) / Math.pow(10, 18);
 		}
+		console.log(this._lockedBalance2);
 	}
 }
