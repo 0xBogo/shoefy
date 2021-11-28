@@ -520,7 +520,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 														0 Shoefy
 													</AnimatedNumber>
 												</div>
-												
+
 											</div>
 										</div>
 									</FadeInLeftDiv>
@@ -568,7 +568,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																			{
 																				this.state.allowance >= this.state.balance ?
 																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(-1)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} type="button" onClick={async () => this.confirmApprove(-1)}>Approve</button>
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.pending} type="button" onClick={async () => this.confirmApprove(-1)}>Approve</button>
 																			}
 																		</div>
 																	</form>
@@ -588,7 +588,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																<div role="tabpanel" className="tab-pane active" id="ctl-unstake">
 																	<form id="unstaking-form">
 																		<div style={{ display: "flex", }}>
-																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Total Rewards</label>
+																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Pending Rewards</label>
 																			<h1 className="form-label total-amount">{numeral(this.state.pendingRewards).format("0.00")}</h1>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
@@ -649,8 +649,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
 																				this.state.allowance2 >= this.state.balance ?
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(0)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} type="button" onClick={async () => this.confirmApprove(0)}>Approve</button>
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={!state.ctValueStake2[0] || state.pending} type="button" onClick={async () => this.confirmStake(0)}>Stake</button> :
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.pending} type="button" onClick={async () => this.confirmApprove(0)}>Approve</button>
 																			}
 																		</div>
 																	</form>
@@ -673,7 +673,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																<div role="tabpanel" className="tab-pane active" id="ctl-unstake">
 																	<form id="unstaking-form">
 																		<div style={{ display: "flex" }}>
-																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Total Rewards</label>
+																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Pending Rewards</label>
 																			<h1 className="form-label total-amount">{state.pendingRewards2 && (numeral(state.pendingRewards2[0]).format("0.00"))}</h1>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
@@ -734,8 +734,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
 																				this.state.allowance2 >= this.state.balance ?
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(1)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} type="button" onClick={async () => this.confirmApprove(1)}>Approve</button>
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={!state.ctValueStake2[1] || state.pending} type="button" onClick={async () => this.confirmStake(1)}>Stake</button> :
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.pending} type="button" onClick={async () => this.confirmApprove(1)}>Approve</button>
 																			}
 																		</div>
 																	</form>
@@ -751,14 +751,14 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																			<button className="btn btn-sm max-btn" onClick={() => this.setUnstake2Max(1)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
-																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={(state.ctValueUnstake2 ? !state.ctValueUnstake2[1] : 1) || state.pending} type="button" onClick={async () => this.confirmUnstake(0)}>{t('staking.unstake.title')}</button>
+																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={(state.ctValueUnstake2 ? !state.ctValueUnstake2[1] : 1) || state.pending} type="button" onClick={async () => this.confirmUnstake(1)}>{t('staking.unstake.title')}</button>
 																		</div>
 																	</form>
 																</div>
 																<div role="tabpanel" className="tab-pane active" id="ctl-unstake">
 																	<form id="unstaking-form">
 																		<div style={{ display: "flex" }}>
-																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Total Rewards</label>
+																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Pending Rewards</label>
 																			<h1 className="form-label total-amount">{state.pendingRewards2 && (numeral(state.pendingRewards2[1]).format("0.00"))}</h1>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
@@ -819,8 +819,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
 																				this.state.allowance2 >= this.state.balance ?
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake2 <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(2)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} type="button" onClick={async () => this.confirmApprove(2)}>Approve</button>
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={!state.ctValueStake2[2] || state.pending} type="button" onClick={async () => this.confirmStake(2)}>Stake</button> :
+																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.pending} type="button" onClick={async () => this.confirmApprove(2)}>Approve</button>
 																			}
 																		</div>
 																	</form>
@@ -836,14 +836,14 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																			<button className="btn btn-sm max-btn" onClick={() => this.setUnstake2Max(2)} type="button">MAX</button>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
-																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={(state.ctValueUnstake2 ? !state.ctValueUnstake2[2] : 1) || state.pending} type="button" onClick={async () => this.confirmUnstake(0)}>{t('staking.unstake.title')}</button>
+																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={(state.ctValueUnstake2 ? !state.ctValueUnstake2[2] : 1) || state.pending} type="button" onClick={async () => this.confirmUnstake(2)}>{t('staking.unstake.title')}</button>
 																		</div>
 																	</form>
 																</div>
 																<div role="tabpanel" className="tab-pane active" id="ctl-unstake">
 																	<form id="unstaking-form">
 																		<div style={{ display: "flex" }}>
-																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Total Rewards</label>
+																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Pending Rewards</label>
 																			<h1 className="form-label total-amount">{state.pendingRewards2 && (numeral(state.pendingRewards2[2]).format("0.00"))}</h1>
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">

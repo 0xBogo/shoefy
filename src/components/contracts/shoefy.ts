@@ -7,8 +7,8 @@ export const ShoeFyAddress = "0x4c687a9158F31321aD76eC7185C458201B375582";
 export const StakingAddress = "0x785c56379f11cceca0a7d8bcd94841dd5fcd1e17";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
 // export const Staking2Address = "0x4f4E5ff85C939b502EdC5B57ea0FC99694ebB1B4";
-export const Staking2Address = "0xa11d2a69ceabe2ccf24af74501d2834341b446d1";
-// export const Staking2Address = "0xd03daccca505d8ff07051a039bc218608b81e253";
+export const Staking2Address = "0xb9003baad396b6a43b2ebb679409c83d855d0c27";
+// export const Staking2Address = "0xe6e59e922069e73d11d6e2c7046bab173f70e996";
 
 export class Shoefy {
 	private readonly _wallet: Wallet;
@@ -152,17 +152,13 @@ export class Shoefy {
 
 		const dates = [30, 60, 90];
 		const rates = [275, 350, 500];
-
+		const amounts = await this._staking2Contract.methods.getAmounts(this._wallet._address).call();
+		console.log(amounts);
 		for (let i = 0; i < 3; i++) {
-			const temp = await this._staking2Contract.methods.getvalidamount(this._wallet._address, rates[i]).call();
-			const temp1 = await this._staking2Contract.methods.getstakeamount(this._wallet._address, rates[i]).call();
-			const a = dates[i] * rates[i] / 365 / 100;
-			this._stake2[i] = temp1 / Math.pow(10, 18);
-			this._unstake2[i] = temp / Math.pow(10, 18);
-			this._pendingRewards2[i] = temp1 / (a + 1) * a / Math.pow(10, 18);
+			const rate = dates[i] * rates[i] / 365 / 100;
+			this._stake2[i] = amounts[0][i] / Math.pow(10, 18);
+			this._unstake2[i] = amounts[1][i] / Math.pow(10, 18);
+			this._pendingRewards2[i] = amounts[2][i] / (rate + 1) * rate / Math.pow(10, 18);
 		}
-		console.log(this._unstake2[0], this._unstake2[1], this._unstake2[2])
-		// console.log('locktime', this._locktime);
-		// console.log('_apr', this._balance);
 	}
 }
