@@ -396,6 +396,8 @@
 	width : 100%;
 	padding-left: 3%;
 	padding-right: 5%;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 @media (max-width : 1000px) {
 	.container{

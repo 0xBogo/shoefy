@@ -541,11 +541,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 													</div>
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">100,000</div>
-													</div>
-													<div className="stake2">
-														<div className="s2_up">Rewards Given</div>
-														<div className="s2_down">123,288.9041</div>
+														<div className="s2_down">0.00</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(0)}>
@@ -616,15 +612,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 													</div>
 													<div className="stake1">
 														<div className="s2_up">APR</div>
-														<div className="s2_down">275%</div>
+														<div className="s2_down">22.60%</div>
 													</div>
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">100,000</div>
-													</div>
-													<div className="stake2">
-														<div className="s2_up">Rewards Given</div>
-														<div className="s2_down">123,288.9041</div>
+														<div className="s2_down">{state.stakedBalance2 ? numeral(state.stakedBalance2[0]).format("0.00") : "0.00"}</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(1)}>
@@ -701,15 +693,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 													</div>
 													<div className="stake1">
 														<div className="s2_up">APR</div>
-														<div className="s2_down">350%</div>
+														<div className="s2_down">57.53%</div>
 													</div>
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">100,000</div>
-													</div>
-													<div className="stake2">
-														<div className="s2_up">Rewards Given</div>
-														<div className="s2_down">123,288.9041</div>
+														<div className="s2_down">{state.stakedBalance2 ? numeral(state.stakedBalance2[1]).format("0.00") : "0.00"}</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(2)}>
@@ -786,15 +774,11 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 													</div>
 													<div className="stake1">
 														<div className="s2_up">APR</div>
-														<div className="s2_down">500%</div>
+														<div className="s2_down">123.29%</div>
 													</div>
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">100,000</div>
-													</div>
-													<div className="stake2">
-														<div className="s2_up">Rewards Given</div>
-														<div className="s2_down">123,288.9041</div>
+														<div className="s2_down">{state.stakedBalance2 ? numeral(state.stakedBalance2[2]).format("0.00") : "0.00"}</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(3)}>
