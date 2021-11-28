@@ -25,7 +25,9 @@
             "wallet_address": "Wallet address",
             "connect_wallet": "Please connect your wallet",
             "tradeable": "Tradeable balance",
-            "staked": "Staked balance",
+            "staked": "Total Staked",
+            "claimed": "Total Claimed",
+            "locked": "Total Locked",
             "pending_rewards": "Pending rewards",
             "staking_period": "Staking Period",
             "apr": "APR"
