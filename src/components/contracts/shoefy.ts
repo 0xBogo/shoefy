@@ -3,12 +3,12 @@ import { Contract } from 'web3-eth-contract';
 // import { ethers } from 'ethers';
 import * as web3 from 'web3-utils';
 import Web3 from 'web3';
+import { themesList } from 'web3modal';
 export const ShoeFyAddress = "0x4c687a9158F31321aD76eC7185C458201B375582";
 export const StakingAddress = "0x86bdb4ea03f1b5158229c8fd15dca51310dc4661";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
-// export const Staking2Address = "0x4f4E5ff85C939b502EdC5B57ea0FC99694ebB1B4";
-// export const Staking2Address = "0x454f7d16d6a50c2e7e3474c19e76d88a868722ad";
-export const Staking2Address = "0x1a2d844dafaca5c2987f016c269092f2392ea26b";
+
+export const Staking2Address = "0x616c1cb9b6107106d9abd61a46aa44452f10671c";
 
 export class Shoefy {
 	private readonly _wallet: Wallet;
@@ -28,6 +28,8 @@ export class Shoefy {
 	private _locktime: number = 0;
 	private _stake2: Array = [];
 	private _unstake2: Array = [];
+	private _totalclaim: number = 0;
+	private _unstakable: Array = [];
 	private _allowance: number = 0;
 	private _allowance2: number = 0;
 
@@ -60,7 +62,7 @@ export class Shoefy {
 	get pendingStakeRewards(): number {
 		return this._pendingRewards;
 	}
-	get claimRewards() : number {
+	get claimRewards(): number {
 		return this._claimRewards;
 	}
 	get apr(): number {
@@ -89,6 +91,12 @@ export class Shoefy {
 	}
 	get unstakeBlanace2(): Array {
 		return this._unstake2;
+	}
+	get totalclaim(): number {
+		return this._totalclaim;
+	}
+	get unstakable(): Array {
+		return this._unstakable;
 	}
 	async approve(amount: number): Promise<void> {
 		let flag = await this._shoeFyContract.methods.approve(StakingAddress, amount).send({ 'from': this._wallet._address });
@@ -135,7 +143,7 @@ export class Shoefy {
 		const rates = [275, 350, 500];
 		// alert(amount);
 		// if (amount > 0) {
-		await this._staking2Contract.methods.withdraw(rates[step]).send({ 'from': this._wallet._address });
+		await this._staking2Contract.methods.withdraw(step).send({ 'from': this._wallet._address });
 		// }
 		// else {
 		// throw 'Your staked shoefy balance is not sufficient to unstake this amount';
@@ -163,18 +171,26 @@ export class Shoefy {
 		this._allowance = await this._shoeFyContract.methods.allowance(this._wallet._address, StakingAddress).call() / (10 ** 18);
 		this._allowance2 = await this._shoeFyContract.methods.allowance(this._wallet._address, Staking2Address).call() / (10 ** 18);
 
-		const dates = [30, 60, 90];
-		const rates = [275, 350, 500];
-		const amounts = await this._staking2Contract.methods.getAmounts(this._wallet._address).call();
-		this._lockedBalance2 = 0;
-		for (let i = 0; i < 3; i++) {
-			const rate = dates[i] * rates[i] / 365 / 100;
-			this._stake2[i] = amounts[0][i] / (rate + 1) / Math.pow(10, 18);
-			this._unstake2[i] = amounts[1][i] / Math.pow(10, 18);
-			this._pendingRewards2[i] = amounts[0][i] / (rate + 1) * rate / Math.pow(10, 18);
-			this._claimedRewards2[i] = amounts[2][i] / (rate + 1) * rate / Math.pow(10, 18);
-			this._lockedBalance2 += (amounts[0][i] - amounts[1][i]) / Math.pow(10, 18);
+		const stakers = await this._staking2Contract.methods.getStakeData(this._wallet._address).call();
+		const time = await this._staking2Contract.methods.getblocktime().call();
+		const fees = await this._staking2Contract.methods.totalFee().call() / 1;
+		const claims = await this._staking2Contract.methods.totalreward.call().call() / Math.pow(10, 18);
+		this._totalclaim = claims;
+		this._claimedRewards2[0] = claims;
+		for(let i = 0 ; i < 3 ; i++)
+		{
+			this._unstakable[i] = -1;
+			this._stake2[i] = 0;
+			this._unstake2[i] = 0;
+			this._pendingRewards2[i] = 0;
 		}
-		console.log(this._lockedBalance2);
+		for (let i = 0; i < stakers.amount.length; i++) {
+			
+			this._unstakable[i] = time - stakers.lockedtime[i];
+			this._stake2[i] = stakers.amount[i] / Math.pow(10, 18);
+			this._unstake2[i] = await this._staking2Contract.methods.getUnstakeValue(this._wallet._address, i).call() / Math.pow(10, 18);
+			this._pendingRewards2[i] = this._unstake2[i] - this._stake2[i] * (100 - fees) / 100;
+		}
+		// console.log(this._lockedBalance2);
 	}
 }
