@@ -636,7 +636,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">{state.stakedBalance2 ? numeral(state.stakedBalance2[0]).format("0.00") : "0.00"}</div>
+														<div className="s2_down">{state.stakedBalance2 ? numeral(100000 - state.stakedBalance2[0]).format("0.00") : "0.00"}</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(1)}>
@@ -718,7 +718,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">{state.stakedBalance2 ? numeral(state.stakedBalance2[1]).format("0.00") : "0.00"}</div>
+														<div className="s2_down">{state.stakedBalance2 ? numeral(300000 - state.stakedBalance2[1]).format("0.00") : "0.00"}</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(2)}>
@@ -800,7 +800,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">{state.stakedBalance2 ? numeral(state.stakedBalance2[2]).format("0.00") : "0.00"}</div>
+														<div className="s2_down">{state.stakedBalance2 ? numeral(600000 - state.stakedBalance2[2]).format("0.00") : "0.00"}</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(3)}>

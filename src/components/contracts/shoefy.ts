@@ -8,7 +8,7 @@ export const ShoeFyAddress = "0x4c687a9158F31321aD76eC7185C458201B375582";
 export const StakingAddress = "0x86bdb4ea03f1b5158229c8fd15dca51310dc4661";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
 
-export const Staking2Address = "0x616c1cb9b6107106d9abd61a46aa44452f10671c";
+export const Staking2Address = "0xf921cb4931d9d35c8aafa7e55341e172856db982";
 
 export class Shoefy {
 	private readonly _wallet: Wallet;
@@ -175,22 +175,23 @@ export class Shoefy {
 		const time = await this._staking2Contract.methods.getblocktime().call();
 		const fees = await this._staking2Contract.methods.totalFee().call() / 1;
 		const claims = await this._staking2Contract.methods.totalreward.call().call() / Math.pow(10, 18);
+
 		this._totalclaim = claims;
 		this._claimedRewards2[0] = claims;
-		for(let i = 0 ; i < 3 ; i++)
-		{
+		for (let i = 0; i < 3; i++) {
 			this._unstakable[i] = -1;
 			this._stake2[i] = 0;
 			this._unstake2[i] = 0;
 			this._pendingRewards2[i] = 0;
 		}
 		for (let i = 0; i < stakers.amount.length; i++) {
-			
 			this._unstakable[i] = time - stakers.lockedtime[i];
 			this._stake2[i] = stakers.amount[i] / Math.pow(10, 18);
 			this._unstake2[i] = await this._staking2Contract.methods.getUnstakeValue(this._wallet._address, i).call() / Math.pow(10, 18);
 			this._pendingRewards2[i] = this._unstake2[i] - this._stake2[i] * (100 - fees) / 100;
 		}
+		for (let i = 0; i < 3; i++)
+			this._stake2[i] = await this._staking2Contract.methods.lockedBalance(i).call() / Math.pow(10, 18);
 		// console.log(this._lockedBalance2);
 	}
 }
