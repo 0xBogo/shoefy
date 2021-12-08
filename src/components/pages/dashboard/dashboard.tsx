@@ -42,6 +42,15 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
     }
 
     async componentDidMount() {
+        if (window.ethereum) {
+            const accounts = await window.ethereum
+                .request({ method: 'eth_accounts' })
+            if (accounts.length == 0) console.log("User is not logged in to MetaMask");
+            else {
+                console.log(accounts[0])
+                this.connectWallet();
+            }
+        }
         if ((window.ethereum || {}).selectedAddress) {
             this.connectWallet();
         }
