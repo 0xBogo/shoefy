@@ -125,12 +125,16 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 			try {
 				const state = this.readState();
 				console.log(state.unstakeBlanace2[step]);
-
-				if (state.unstakeBlanace2[step] != 0 ) {
-					NotificationManager.warning("Staking period not matured!");
+				const dates = [30, 60, 90]
+				if (state.unstakeBlanace2[step] != 0) {
+					NotificationManager.warning(`You already stake in ${dates[step]}days`);
 					return;
 				}
-
+				const stakeamount = [600000, 300000, 100000];
+				if (stakeamount[step] - state.stakedBalance2[step] < state.ctValueStake2[step]) {
+					NotificationManager.warning('Staking Balance exceeds Token Cap amount');
+					return;
+				}
 				if (state.ctValueStake2[step] >= 0) {
 					this.updateState({ pending: true });
 					console.log("ctVa:", state.ctValueStake2[step]);
@@ -636,7 +640,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">{state.stakedBalance2 ? numeral(100000 - state.stakedBalance2[0]).format("0.00") : "0.00"}</div>
+														<div className="s2_down">{state.stakedBalance2 ? numeral(600000 - state.stakedBalance2[0]).format("0.00") : "0.00"}</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(1)}>
@@ -800,7 +804,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">{state.stakedBalance2 ? numeral(600000 - state.stakedBalance2[2]).format("0.00") : "0.00"}</div>
+														<div className="s2_down">{state.stakedBalance2 ? numeral(100000 - state.stakedBalance2[2]).format("0.00") : "0.00"}</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(3)}>

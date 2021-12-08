@@ -156,7 +156,6 @@ export class Shoefy {
 
 	async refresh(): Promise<void> {
 		let web3 = new Web3(window.ethereum);
-
 		let balance_eth = await web3.eth.getBalance(this._wallet._address);
 		// console.log((web3.utils.fromWei(balance_eth, "ether")+" ETH"));
 
