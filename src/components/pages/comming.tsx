@@ -38,32 +38,32 @@ export type DashboardState = {
 };
 
 const renderer = ({ hours, minutes, seconds, completed }) => {
-  if (completed) {
-    // Render a complete state
-    return <span>...</span>;
-  } else {
-    // Render a countdown
-    return (
-        <div className="countdown">
-        	<div>
-	        	<h3>00{/*{hours < 10 ? '0'+hours : hours }*/}</h3>
-	        	<span>Days</span>
-        	</div>
-        	<div>
-	        	<h3>{hours < 10 ? '0'+hours : hours }</h3>
-	        	<span>Hours</span>
-        	</div>
-        	<div>
-	        	<h3>{minutes < 10 ? '0'+minutes : minutes }</h3>
-	        	<span>Minutes</span>
-        	</div>
-        	<div>
-	        	<h3>{seconds < 10 ? '0'+seconds : seconds }</h3>
-	        	<span>Seconds</span>
-        	</div>
-      	</div>
-    );
-  }
+    if (completed) {
+        // Render a complete state
+        return <span>...</span>;
+    } else {
+        // Render a countdown
+        return (
+            <div className="countdown">
+                <div>
+                    <h3>00{/*{hours < 10 ? '0'+hours : hours }*/}</h3>
+                    <span>Days</span>
+                </div>
+                <div>
+                    <h3>{hours < 10 ? '0' + hours : hours}</h3>
+                    <span>Hours</span>
+                </div>
+                <div>
+                    <h3>{minutes < 10 ? '0' + minutes : minutes}</h3>
+                    <span>Minutes</span>
+                </div>
+                <div>
+                    <h3>{seconds < 10 ? '0' + seconds : seconds}</h3>
+                    <span>Seconds</span>
+                </div>
+            </div>
+        );
+    }
 };
 
 class Dashboard extends BaseComponent<DashboardProps & WithTranslation, DashboardState> {
@@ -77,17 +77,17 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
 
     async componentDidMount() {
         if (window.ethereum) {
-			const accounts = await window.ethereum
-				.request({ method: 'eth_accounts' })
-			if (accounts.length == 0) console.log("User is not logged in to MetaMask");
-			else {
-				console.log(accounts[0])
-				this.connectWallet();
-			}
-		}
-		if ((window.ethereum || {}).selectedAddress) {
-			this.connectWallet();
-		}
+            const accounts = await window.ethereum
+                .request({ method: 'eth_accounts' })
+            if (accounts.length == 0) console.log("User is not logged in to MetaMask");
+            else {
+                console.log(accounts[0])
+                this.connectWallet();
+            }
+        }
+        if ((window.ethereum || {}).selectedAddress) {
+            this.connectWallet();
+        }
     }
 
     async connectWallet() {
@@ -150,7 +150,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
         const state = this.readState();
 
         let presaleTime = new Date('2022-12-12T00:00:00');
-  		let currentTime = new Date();
+        let currentTime = new Date();
 
         const accountEllipsis = this.props.wallet._address ? `${this.props.wallet._address.substring(0, 4)}...${this.props.wallet._address.substring(this.props.wallet._address.length - 4)}` : '___';
 
@@ -169,6 +169,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                     </div>
                     <nav id="mainNav">
                         <ul className="navbar-nav">
+                            <li className="nav_letter1"><NavLink className="link_letter" to="sales">Sales</NavLink></li>
                             <li className="nav_letter1"><NavLink className="link_letter" to="nftStaking">NFTs Staking</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking">Shoe Staking</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="nftFarming">Farm</NavLink></li>
@@ -191,9 +192,9 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                 </div>
                 <div className="content-wrapper">
                     <div className="part_c">
-                        <div className="comming" style={{backgroundImage:'url(images/Frame1342.png)'}}>
-                            <div style={{ width: '900px', margin: '0 auto', position: 'relative', paddingBottom: '100px'}} className = "nfts">
-                            	<div className="image imageleft" style={{ width: "120px", position: "absolute", top: "80px", left: "50px" }}>
+                        <div className="comming" style={{ backgroundImage: 'url(images/Frame1342.png)' }}>
+                            <div style={{ width: '900px', margin: '0 auto', position: 'relative', paddingBottom: '100px' }} className="nfts">
+                                <div className="image imageleft" style={{ width: "120px", position: "absolute", top: "80px", left: "50px" }}>
                                     <img src="/images/NFT-2.png" style={{ width: "100%" }} />
                                     <div className="star1">
                                         <img src="images/star.png" />
@@ -231,7 +232,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                 </div>
                                 <div className="comingtitle">COMING SOON</div>
                                 <div>
-                                	<Countdown date={presaleTime} renderer={renderer} />
+                                    <Countdown date={presaleTime} renderer={renderer} />
                                 </div>
                                 {/*<img src="images/Frame 1342.png" />*/}
                             </div>
@@ -249,7 +250,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
 const DashboardWithTranlation = withTranslation()(Dashboard);
 
 const DashboardMain = compose(
-  withWallet,
+    withWallet,
 )(DashboardWithTranlation);
 
 export default DashboardMain

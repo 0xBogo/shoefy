@@ -1,0 +1,19 @@
+.sale{
+    background-size: 450px 450px;
+    background-repeat: no-repeat;
+	height: 100%;
+	background-position:top;
+    overflow: hidden;
+}
+
+.saleamount{
+    font-size: 40px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 64px;
+	letter-spacing: -0.02em;
+    color: white;
+	text-align: center;
+
+    padding-top: 430px;
+}

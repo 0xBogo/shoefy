@@ -137,6 +137,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                     </div>
                     <nav id="mainNav">
                         <ul className="navbar-nav">
+                            <li className="nav_letter1"><NavLink className="link_letter" to="sales">Sales</NavLink></li>
                             <li className="nav_letter1"><NavLink className="link_letter" to="nftStaking">NFTs Staking</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking">Shoe Staking</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="nftFarming">Farm</NavLink></li>

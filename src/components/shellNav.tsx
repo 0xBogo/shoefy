@@ -121,7 +121,7 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 		const pages2 = pages.slice(3, 7);
 
 		const state = this.readState();
-		
+
 		return (
 			<div className="navigation-wrapper">
 				<div className="logo-wrapper">
@@ -136,6 +136,7 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 				</div>
 				<nav id="mainNav">
 					<ul className="navbar-nav">
+						<li className="nav_letter1"><NavLink className="link_letter" to="sales">Sales</NavLink></li>
 						<li className="nav_letter1"><NavLink className="link_letter" to="nftStaking">NFTs Staking</NavLink></li>
 						<li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking">Shoe Staking</NavLink></li>
 						<li className="nav_letter"><NavLink className="link_letter" to="nftFarming">Farm</NavLink></li>
@@ -164,7 +165,7 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 const ShellNavWithTranlation = withTranslation()(ShellNav);
 
 const ShellNavMain = compose(
-  withWallet,
+	withWallet,
 )(ShellNavWithTranlation);
 
 export default ShellNavMain
