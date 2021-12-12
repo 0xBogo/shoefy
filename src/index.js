@@ -22,6 +22,7 @@ import Staking2Component from './components/pages/staking2Component';
 import NFTStakingComponent from './components/pages/nftStakingComponent';
 import Chart from './components/pages/chart';
 import Comming from './components/pages/comming';
+import Sales from './components/pages/Sales';
 
 import { Wallet } from './components/wallet';
 import WalletContext from './components/walletContext.js';
@@ -38,6 +39,7 @@ const pagesInNavigator = [
 	{ id: 'shoefyStaking2', title: 'Booster NFTs', component: Comming},
 	{ id: 'nftFarming', title: 'nft Farming', component: Comming},
 	{ id: 'chart', title: 'Chart', component: Chart},
+	{ id: 'sales', title: 'Sales', component: Sales},
 ];
 
 const overrideCss = css`
