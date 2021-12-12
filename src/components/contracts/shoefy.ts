@@ -8,7 +8,7 @@ export const ShoeFyAddress = "0x4c687a9158F31321aD76eC7185C458201B375582";
 export const StakingAddress = "0x86bdb4ea03f1b5158229c8fd15dca51310dc4661";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
 
-export const Staking2Address = "0xcafd1855f7f54022b89cadb8451dbff584a54091";
+export const Staking2Address = "0xce1856678ab1fcb27c28785ffb6a990f4475f2d0";
 
 export class Shoefy {
 	private readonly _wallet: Wallet;
@@ -32,7 +32,7 @@ export class Shoefy {
 	private _unstakable: Array = [];
 	private _allowance: number = 0;
 	private _allowance2: number = 0;
-
+	private _tokencaps2: Array = [];
 	constructor(wallet: Wallet) {
 		this._wallet = wallet;
 		this._stakingContract = wallet.connectToContract(StakingAddress, require('./staking.abi.json'));
@@ -97,6 +97,9 @@ export class Shoefy {
 	}
 	get unstakable(): Array {
 		return this._unstakable;
+	}
+	get tokencaps(): Array {
+		return this._tokencaps2;
 	}
 	async approve(amount: number): Promise<void> {
 		let flag = await this._shoeFyContract.methods.approve(StakingAddress, amount).send({ 'from': this._wallet._address });
@@ -174,7 +177,7 @@ export class Shoefy {
 		const time = await this._staking2Contract.methods.getblocktime().call();
 		const fees = await this._staking2Contract.methods.totalFee().call() / 1;
 		const claims = await this._staking2Contract.methods.totalreward.call().call() / Math.pow(10, 18);
-		console.log(stakers);
+
 		this._totalclaim = claims;
 		this._claimedRewards2[0] = claims;
 		for (let i = 0; i < 3; i++) {
@@ -182,6 +185,7 @@ export class Shoefy {
 			this._stake2[i] = 0;
 			this._unstake2[i] = 0;
 			this._pendingRewards2[i] = 0;
+			this._tokencaps2[i] = 0;
 		}
 		for (let i = 0; i < stakers.amount.length; i++) {
 			this._unstakable[i] = time - stakers.lockedtime[i];
@@ -189,8 +193,11 @@ export class Shoefy {
 			this._unstake2[i] = await this._staking2Contract.methods.getUnstakeValue(this._wallet._address, i).call() / Math.pow(10, 18);
 			this._pendingRewards2[i] = (this._unstake2[i] - this._stake2[i]);
 		}
-		for (let i = 0; i < 3; i++)
+		for (let i = 0; i < 3; i++) {
 			this._stake2[i] = await this._staking2Contract.methods.lockedBalance(i).call() / Math.pow(10, 18);
-		// console.log(this._lockedBalance2);
+			const tokencaps = Math.ceil(await this._staking2Contract.methods.tokencaps(i).call() / Math.pow(10, 18));
+			console.log(tokencaps);
+			this._tokencaps2[i] = tokencaps;
+		}
 	}
 }

@@ -47,6 +47,7 @@ export type StakingState = {
 	claimedRewards2?: Array,
 	lockedBalance2?: number;
 	unstakeBlanace2?: Array,
+	tokencaps2?: Array,
 
 	apr?: number,
 	allowance: number,
@@ -130,8 +131,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 					NotificationManager.warning(`You already stake in ${dates[step]}days`);
 					return;
 				}
-				const stakeamount = [600000, 300000, 100000];
-				if (stakeamount[step] - state.stakedBalance2[step] < state.ctValueStake2[step]) {
+				if (state.tokencaps2[step] < state.ctValueStake2[step]) {
 					NotificationManager.warning('Staking Balance exceeds Token Cap amount');
 					return;
 				}
@@ -303,6 +303,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 						claimedRewards2: shoefy.claimedRewards2,
 						lockedBalance2: shoefy.lockedBalance2,
 						unstakeBlanace2: shoefy.unstakeBlanace2,
+						tokencaps2: shoefy.tokencaps,
 						apr: shoefy.apr,
 						totalclaim: shoefy.totalclaim,
 						unstakable: shoefy.unstakable
@@ -523,7 +524,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 												<div className="infoitem">
 													<h2>{t('staking.your_info.staked')}</h2>
 													<AnimatedNumber
-														value={numeral(state.stakedBalance + (state.stakedBalance2 ? state.stakedBalance2[0] + state.stakedBalance2[1] + state.stakedBalance2[2] : 0) || 0).format('0.00')}
+														value={numeral((state.stakedBalance2 ? state.stakedBalance2[0] + state.stakedBalance2[1] + state.stakedBalance2[2] : 0) || 0).format('0.00')}
 														duration="1000"
 														formatValue={value => `${Number(parseFloat(value).toFixed(2)).toLocaleString('en', { minimumFractionDigits: 2 })}`}
 														className="staking-info"
@@ -649,7 +650,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">{state.stakedBalance2 ? numeral(600000 - state.stakedBalance2[0]).format("0.00") : "0.00"}</div>
+														<div className="s2_down">{state.tokencaps2 ? state.tokencaps2[0] : "0"}</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(1)}>
@@ -731,7 +732,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">{state.stakedBalance2 ? numeral(300000 - state.stakedBalance2[1]).format("0.00") : "0.00"}</div>
+														<div className="s2_down">{state.tokencaps2 ? state.tokencaps2[1] : "0"}</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(2)}>
@@ -813,7 +814,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 
 													<div className="stake2">
 														<div className="s2_up">Token Cap (SHOE)</div>
-														<div className="s2_down">{state.stakedBalance2 ? numeral(100000 - state.stakedBalance2[2]).format("0.00") : "0.00"}</div>
+														<div className="s2_down">{state.tokencaps2 ? state.tokencaps2[2] : "0"}</div>
 													</div>
 												</div>
 												<div className="stake3" onClick={() => this.show_detail(3)}>
