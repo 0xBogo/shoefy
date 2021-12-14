@@ -11,15 +11,6 @@ import AnimatedNumber from 'animated-number-react';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 
-import SearchIcon from '@mui/icons-material/Search';
-import SettingsIcon from '@mui/icons-material/Settings';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import FoxImg from '../../images/fox.png';
-import './nftStakingComponent.css';
-
-import {Header} from './header';
-import {Footer} from './footer';
-
 export type StakingProps = {};
 export type StakingState = {
 	nftStaking?: ShoefyNFTStaking,
@@ -149,12 +140,11 @@ class NFTStakingComponent extends BaseComponent<StakingProps & WithTranslation, 
 				.request({ method: 'eth_accounts' })
 			if (accounts.length == 0) console.log("User is not logged in to MetaMask");
 			else {
+				const chaindId = await window.ethereum.request({ method: 'eth_chainId' })
+				this.props.wallet.setChainId(Number(chaindId));
 				console.log(accounts[0])
 				this.connectWallet();
 			}
-		}
-		if ((window.ethereum || {}).selectedAddress) {
-			this.connectWallet();
 		}
 	}
 

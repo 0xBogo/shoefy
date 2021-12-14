@@ -4,17 +4,12 @@ import * as numeral from 'numeral';
 import { BaseComponent, ShellErrorHandler } from '../shellInterfaces';
 import { Wallet } from '../wallet';
 import { Shoefy } from '../contracts/shoefy';
-import { ShoefyStaking } from '../contracts/shoefystaking';
 import { WithTranslation, withTranslation, TFunction, Trans } from 'react-i18next';
 import { fadeInLeft, fadeInRight, pulse } from 'react-animations';
 import styled, { keyframes } from 'styled-components';
 import AnimatedNumber from 'animated-number-react';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
-import FoxImg from '../../images/fox.png';
-import SearchIcon from '@mui/icons-material/Search';
-import SettingsIcon from '@mui/icons-material/Settings';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import './stakingComponent.css';
 
 export type StakingProps = {};
@@ -155,12 +150,11 @@ class Staking2Component extends BaseComponent<StakingProps & WithTranslation, St
 				.request({ method: 'eth_accounts' })
 			if (accounts.length == 0) console.log("User is not logged in to MetaMask");
 			else {
+				const chaindId = await window.ethereum.request({ method: 'eth_chainId' })
+				this.props.wallet.setChainId(Number(chaindId));
 				console.log(accounts[0])
 				this.connectWallet();
 			}
-		}
-		if ((window.ethereum || {}).selectedAddress) {
-			this.connectWallet();
 		}
 	}
 

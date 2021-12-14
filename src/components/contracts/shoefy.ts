@@ -3,44 +3,51 @@ import { Contract } from 'web3-eth-contract';
 // import { ethers } from 'ethers';
 import * as web3 from 'web3-utils';
 import Web3 from 'web3';
-import { themesList } from 'web3modal';
-export const ShoeFyAddress = "0x4c687a9158F31321aD76eC7185C458201B375582";
+export const ShoeFyAddress = {
+	4: "0x868c05b8c8a51c72e362cdc50364ed86595f7b8e",
+	97: "0x4c687a9158F31321aD76eC7185C458201B375582"
+};
 export const StakingAddress = "0x86bdb4ea03f1b5158229c8fd15dca51310dc4661";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
 
-export const Staking2Address = "0xce1856678ab1fcb27c28785ffb6a990f4475f2d0";
+export const Staking2Address = {
+	4: "0x13e16236d8eb65138d6e17dda846231df0407004",
+	97: "0xce1856678ab1fcb27c28785ffb6a990f4475f2d0"
+};
 
 export class Shoefy {
 	private readonly _wallet: Wallet;
 	private readonly _contract: Contract;
 	private readonly _shoeFyContract: Contract;
 	private readonly _stakingContract: Contract;
+	private readonly _staking2Contract: Contract;
 
 	private _balance: number = 0;
 	private _stake: number = 0;
-	private _claimRewards: numeber = 0;
+	private _claimRewards: number = 0;
 	private _pendingRewards: number = 0;
-	private _pendingRewards2: Array = [];
-	private _claimedRewards2: Array = [];
+	private _pendingRewards2: any = [];
+	private _claimedRewards2: any = [];
 	private _lockedBalance2: number = 0;
 	private _apr: number = 0;
 	private _balance_eth: number = 0;
 	private _locktime: number = 0;
-	private _stake2: Array = [];
-	private _unstake2: Array = [];
+	private _stake2: any = [];
+	private _unstake2: any = [];
 	private _totalclaim: number = 0;
-	private _unstakable: Array = [];
+	private _unstakable: any = [];
 	private _allowance: number = 0;
 	private _allowance2: number = 0;
-	private _tokencaps2: Array = [];
+	private _tokencaps2: any = [];
 	constructor(wallet: Wallet) {
 		this._wallet = wallet;
-		this._stakingContract = wallet.connectToContract(StakingAddress, require('./staking.abi.json'));
-		this._shoeFyContract = wallet.connectToContract(ShoeFyAddress, require('./shoefy.abi.json'));
-		this._staking2Contract = wallet.connectToContract(Staking2Address, require('./staking2.abi.json'));
-
+		// this._stakingContract = wallet.connectToContract(StakingAddress, require('./staking.abi.json'));
+		this._shoeFyContract = wallet.connectToContract(ShoeFyAddress[this._wallet.getChainId()], require('./shoefy.abi.json'));
+		this._staking2Contract = wallet.connectToContract(Staking2Address[this._wallet.getChainId()], require('./staking2.abi.json'));
 		this.stake2 = this.stake2.bind(this);
 	}
+
+
 
 	get contract(): Contract {
 		return this._contract;
@@ -77,28 +84,28 @@ export class Shoefy {
 	get allowance2(): number {
 		return this._allowance2
 	}
-	get stakedBalance2(): Array {
+	get stakedBalance2(): any {
 		return this._stake2;
 	}
-	get pendingRewards2(): Array {
+	get pendingRewards2(): any {
 		return this._pendingRewards2;
 	}
-	get claimedRewards2(): Array {
+	get claimedRewards2(): any {
 		return this._claimedRewards2;
 	}
 	get lockedBalance2(): number {
 		return this._lockedBalance2;
 	}
-	get unstakeBlanace2(): Array {
+	get unstakeBlanace2(): any {
 		return this._unstake2;
 	}
 	get totalclaim(): number {
 		return this._totalclaim;
 	}
-	get unstakable(): Array {
+	get unstakable(): any {
 		return this._unstakable;
 	}
-	get tokencaps(): Array {
+	get tokencaps(): any {
 		return this._tokencaps2;
 	}
 	async approve(amount: number): Promise<void> {
@@ -109,7 +116,7 @@ export class Shoefy {
 
 	async approve2(amount: any): Promise<void> {
 
-		let flag = await this._shoeFyContract.methods.approve(Staking2Address, amount).send({ 'from': this._wallet._address });
+		let flag = await this._shoeFyContract.methods.approve(Staking2Address[this.wallet.getChainId()], amount).send({ 'from': this._wallet._address });
 		return flag
 
 	}
@@ -165,14 +172,14 @@ export class Shoefy {
 		this._balance_eth = parseFloat((web3.utils.fromWei(balance_eth, "ether"))).toFixed(3);
 		// console.log(this._balance_eth)
 		this._balance = Math.floor(await this._shoeFyContract.methods.balanceOf(this._wallet._address).call() / (10 ** 12)) / (10 ** 6);
-		this._stake = await this._stakingContract.methods.stakedBalanceOf(this._wallet._address).call() / (10 ** 18);
-		this._pendingRewards = await this._stakingContract.methods.pendingRewards(this._wallet._address).call() / (10 ** 18);
-		this._apr = await this._stakingContract.methods.getCurrentAPR().call() / 100;
-		this._claimRewards = await this._stakingContract.methods.getClaimRewards(this._wallet._address).call() / Math.pow(10, 18);
+		// this._stake = await this._stakingContract.methods.stakedBalanceOf(this._wallet._address).call() / (10 ** 18);
+		// this._pendingRewards = await this._stakingContract.methods.pendingRewards(this._wallet._address).call() / (10 ** 18);
+		// this._apr = await this._stakingContract.methods.getCurrentAPR().call() / 100;
+		// this._claimRewards = await this._stakingContract.methods.getClaimRewards(this._wallet._address).call() / Math.pow(10, 18);
 
-		this._allowance = await this._shoeFyContract.methods.allowance(this._wallet._address, StakingAddress).call() / (10 ** 18);
-		this._allowance2 = await this._shoeFyContract.methods.allowance(this._wallet._address, Staking2Address).call() / (10 ** 18);
-
+		// this._allowance = await this._shoeFyContract.methods.allowance(this._wallet._address, StakingAddress).call() / (10 ** 18);
+		this._allowance2 = await this._shoeFyContract.methods.allowance(this._wallet._address, Staking2Address[this.wallet.getChainId()]).call() / (10 ** 18);
+		console.log(this._allowance2);
 		const stakers = await this._staking2Contract.methods.getStakeData(this._wallet._address).call();
 		const time = await this._staking2Contract.methods.getblocktime().call();
 		const fees = await this._staking2Contract.methods.totalFee().call() / 1;
@@ -192,11 +199,11 @@ export class Shoefy {
 			this._stake2[i] = stakers.amount[i] / Math.pow(10, 18);
 			this._unstake2[i] = await this._staking2Contract.methods.getUnstakeValue(this._wallet._address, i).call() / Math.pow(10, 18);
 			this._pendingRewards2[i] = (this._unstake2[i] - this._stake2[i]);
+			console.log(this._pendingRewards2[i]);
 		}
 		for (let i = 0; i < 3; i++) {
 			this._stake2[i] = await this._staking2Contract.methods.lockedBalance(i).call() / Math.pow(10, 18);
 			const tokencaps = Math.ceil(await this._staking2Contract.methods.tokencaps(i).call() / Math.pow(10, 18));
-			console.log(tokencaps);
 			this._tokencaps2[i] = tokencaps;
 		}
 	}

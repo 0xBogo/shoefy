@@ -4,6 +4,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Contract } from 'web3-eth-contract';
 
 export class Wallet {
+	private _chaindId: number = 4;
 	private _address: string = null;
 	private _provider: any = null;
 	private web3Modal = new Web3Modal({
@@ -17,24 +18,16 @@ export class Wallet {
 
 	public getProviderOptions(): any {
 		const providerOptions = {
-			// Example with injected providers
-		  	// injected: {
-		   //  	display: {
-		   //    		logo: "data:image/gif;base64,INSERT_BASE64_STRING",
-		   //    		name: "Injected",
-		   //    		description: "Connect with the provider in your Browser"
-		   //  	},
-		   //  	package: null
-		  	// },
+
 			walletconnect: {
 				package: WalletConnectProvider,
 				options: {
-					rpc: {
-						// 4: 'https://rinkeby-light.eth.linkpool.io/',
-						97: 'https://data-seed-prebsc-1-s1.binance.org:8545'
-					},
+					// rpc: {
+					// 	// 4: 'https://rinkeby-light.eth.linkpool.io/',
+					// 	97: 'https://data-seed-prebsc-1-s1.binance.org:8545'
+					// },
 					network: 'mainnet',
-					chainId: 97,
+					chainId: this._chaindId,
 					infuraId: 'TR4KMIQ72NEDFNJ2ZP5C1BGGTD6DSTTGGT '
 				}
 			}
@@ -51,7 +44,7 @@ export class Wallet {
 		let tempcontentdom1 = document.getElementById('contentdom1')
 		let tempcontentdom2 = document.getElementById('contentdom2')
 
-		if(temptitledom) {
+		if (temptitledom) {
 			temptitledom.remove()
 			tempcontentdom1.remove()
 			tempcontentdom2.remove()
@@ -105,10 +98,10 @@ export class Wallet {
 		const selectedAccount = accounts[0];
 
 		const provider: any = this._web3.eth.currentProvider;
-		if (!provider || ((provider.chainId != 97) && (provider.networkVersion != 97))) {
+		if (!provider || ((provider.chainId != this._chaindId) && (provider.networkVersion != this._chaindId))) {
 			if (provider.isMetaMask) {
 				const networkinfo = [{
-					chainId: '97',
+					chainId: this._chaindId,
 					chainName: 'Binance Smart Chain',
 					nativeCurrency:
 					{
@@ -164,5 +157,12 @@ export class Wallet {
 		}
 
 		return new this._web3.eth.Contract(abi, address);
+	}
+
+	public setChainId(id: number) {
+		this._chaindId = id;
+	}
+	public getChainId() {
+		return this._chaindId;
 	}
 }

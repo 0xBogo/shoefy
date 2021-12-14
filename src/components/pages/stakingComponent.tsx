@@ -13,22 +13,20 @@ import styled, { keyframes } from 'styled-components';
 import AnimatedNumber from 'animated-number-react';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { NavLink, useLocation } from 'react-router-dom';
 
 import './stakingComponent.css';
 
-import mark_circle from "../../images/mark_circle.png"
-import down from "../../images/down.png"
-
-import mark from '../../../src/images/mark.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars } from '@fortawesome/free-solid-svg-icons';
-
-import { NavLink, useLocation } from 'react-router-dom';
-
 import { Footer } from './footer';
 
 import '../shellNav.css';
 import '../shellNav.icons.css';
+
+import mark_circle from "../../images/mark_circle.png"
+import down from "../../images/down.png"
+import mark from '../../../src/images/mark.png';
 
 export type StakingProps = {};
 export type StakingState = {
@@ -257,13 +255,13 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 				.request({ method: 'eth_accounts' })
 			if (accounts.length == 0) console.log("User is not logged in to MetaMask");
 			else {
+				const chaindId = await window.ethereum.request({ method: 'eth_chainId' })
+				this.props.wallet.setChainId(Number(chaindId));
 				console.log(accounts[0])
 				this.connectWallet();
 			}
 		}
-		if ((window.ethereum || {}).selectedAddress) {
-			this.connectWallet();
-		}
+
 	}
 
 	private async loop(): Promise<void> {
@@ -338,11 +336,10 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 			const wallet = this.props.wallet;
 			const result = await wallet.connect();
 
-
 			if (!result) {
 				throw 'The wallet connection was cancelled.';
 			}
-
+			console.log(wallet);
 			const shoefy = new Shoefy(wallet);
 
 			this.updateState({ shoefy: shoefy, wallet: wallet, looping: true, pending: false });
@@ -486,6 +483,17 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 							<li className="nav_letter"><NavLink className="link_letter" to="nftFarming">Farm</NavLink></li>
 							<li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking2">Booster NFTs</NavLink></li>
 							<li className="nav_letter">
+								<select className="networkselect"
+									value={this.props.wallet.getChainId()}
+									onChange={(e) => {
+										this.props.wallet.setChainId(Number(e.target.value));
+										this.disconnectWallet();
+									}}>
+									<option value={4}>Rinkeby Testnet</option>
+									<option value={97}>BSC Testnet</option>
+								</select>
+							</li>
+							<li className="nav_letter">
 								{this.props.wallet._address ?
 									<div onClick={this.disconnectWallet} className="wallet-connect">
 										{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
@@ -561,78 +569,6 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 											</div>
 										</div>
 									</FadeInLeftDiv>
-									{/* <FadeInRightDiv className="your_staking">
-										<div className="each_element" style={{ transition: '0.3s' }}>
-											<div className="each_up" style={{ height: '120px' }}>
-												<div className="stake_1">
-													<img src={mark_circle} width="72px" height="72px" />
-												</div>
-												<div className="nftdetail">
-													<div className="stake2" >
-														<div className="s2_up" >SHOE </div>
-														<div className="s2_down" style={{ width: "150px" }}>Flexible Time</div>
-													</div>
-													<div className="stake1">
-														<div className="s2_up">APY</div>
-														<div className="s2_down">{state.apr}%</div>
-													</div>
-													<div style={{ width: "120px" }}></div>
-												</div>
-												<div className="stake3" onClick={() => this.show_detail(0)}>
-													Detail<img src={down} width="14px" height="8px"></img>
-												</div>
-											</div>
-											<div className="each_down" style={{ maxHeight: detail[0], overflow: 'hidden' }}>
-												<div className="col-md-11 d-flex">
-													<div className="shadow d-flex flex-column flex-fill gradient-card ">
-														<div style={{ margin: "-20px" }}>
-															<div className="tab-content stake-tab-content">
-																<div role="tabpanel" className="tab-pane active" id="ctl-stake">
-																	<form id="staking-form">
-																		<label className="form-label">{t('staking.stake.amount')}</label>
-																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={(event) => this.handleInputStake(-1, event)} value={state.ctValueStake || 0} />
-																			<button className="btn btn-sm max-btn" onClick={() => this.setStakePercentage(-1, 100)} type="button">MAX</button>
-																		</div>
-																		<div className="d-flex justify-content-center button-row margin_top">
-																			{
-																				this.state.allowance >= this.state.balance ?
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueStake <= 0 || state.pending} type="button" onClick={async () => this.confirmStake(-1)}>Stake</button> :
-																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.pending} type="button" onClick={async () => this.confirmApprove(-1)}>Approve</button>
-																			}
-																		</div>
-																	</form>
-																</div>
-																<div role="tabpanel" className="tab-pane active" id="ctl-unstake">
-																	<form id="unstaking-form">
-																		<label className="form-label">{t('staking.unstake.amount')}</label>
-																		<div className="maxValue">
-																			<input type="number" className="form-control form-control-lg" disabled={state.pending} onChange={this.handleInputUnstake} value={state.ctValueUnstake || 0} />
-																			<button className="btn btn-sm max-btn" onClick={() => this.setUnStakePercentage(100)} type="button">MAX</button>
-																		</div>
-																		<div className="d-flex justify-content-center button-row margin_top">
-																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.ctValueUnstake <= 0 || state.pending} type="button" onClick={async () => this.confirmUnstake(-1)}>{t('staking.unstake.title')}</button>
-																		</div>
-																	</form>
-																</div>
-																<div role="tabpanel" className="tab-pane active" id="ctl-unstake">
-																	<form id="unstaking-form">
-																		<div style={{ display: "flex", }}>
-																			<label className="form-label" style={{ paddingTop: "12px", paddingRight: "20px" }}>Pending Rewards</label>
-																			<h1 className="form-label total-amount">{numeral(this.state.pendingRewards).format("0.00")}</h1>
-																		</div>
-																		<div className="d-flex justify-content-center button-row margin_top">
-																			<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#B1B5C3", color: 'white' }} type="button" onClick={async () => this.confirmClaim()}>Claim</button>
-																		</div>
-																	</form>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</FadeInRightDiv> */}
 									<FadeInRightDiv className="your_staking">
 										<div className="each_element" style={{ transition: '0.3s' }}>
 											<div className="each_up" style={{ height: '120px' }}>
@@ -675,7 +611,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
-																				this.state.allowance2 >= this.state.balance ?
+																				(this.state.allowance2 >= this.state.balance && this.state.balance) ?
 																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.pending} type="button" onClick={async () => this.confirmStake(0)}>Stake</button> :
 																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.pending} type="button" onClick={async () => this.confirmApprove(0)}>Approve</button>
 																			}
@@ -757,7 +693,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
-																				this.state.allowance2 >= this.state.balance ?
+																				(this.state.allowance2 >= this.state.balance && this.state.balance) ?
 																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.pending} type="button" onClick={async () => this.confirmStake(1)}>Stake</button> :
 																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.pending} type="button" onClick={async () => this.confirmApprove(1)}>Approve</button>
 																			}
@@ -839,7 +775,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 																		</div>
 																		<div className="d-flex justify-content-center button-row margin_top">
 																			{
-																				this.state.allowance2 >= this.state.balance ?
+																				(this.state.allowance2 >= this.state.balance && this.state.balance) ?
 																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.pending} type="button" onClick={async () => this.confirmStake(2)}>Stake</button> :
 																					<button className="btn btn-md link-dark" style={{ width: '100%', backgroundColor: "#CF3279", margin: 0, color: "white" }} disabled={state.pending} type="button" onClick={async () => this.confirmApprove(2)}>Approve</button>
 																			}
