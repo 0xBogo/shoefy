@@ -246,3 +246,20 @@
         margin-top: -10px!important;
     }
 }
+.networkselect{
+    background-color : transparent;
+    color : white;
+    outline : none;
+    font-weight: bold;
+    margin : 8px 32px 16px 16px;
+    border: none;
+    border-bottom : 1px solid white;
+}
+.networkselect>option{
+    position: relative;
+    background-color :rgb(40,43,58)!important;
+    padding: 10px;
+}
+.networkselect>option li:hover {
+    color: red!important;;
+}

@@ -77,17 +77,16 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
 
     async componentDidMount() {
         if (window.ethereum) {
-            const accounts = await window.ethereum
-                .request({ method: 'eth_accounts' })
-            if (accounts.length == 0) console.log("User is not logged in to MetaMask");
-            else {
-                console.log(accounts[0])
-                this.connectWallet();
-            }
-        }
-        if ((window.ethereum || {}).selectedAddress) {
-            this.connectWallet();
-        }
+			const accounts = await window.ethereum
+				.request({ method: 'eth_accounts' })
+			if (accounts.length == 0) console.log("User is not logged in to MetaMask");
+			else {
+				const chaindId = await window.ethereum.request({ method: 'eth_chainId' })
+				this.props.wallet.setChainId(Number(chaindId));
+				console.log(accounts[0])
+				this.connectWallet();
+			}
+		}
     }
 
     async connectWallet() {
@@ -174,6 +173,17 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                             <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking">Shoe Staking</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="nftFarming">Farm</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking2">Booster NFTs</NavLink></li>
+                            <li className="nav_letter">
+							<select className="networkselect"
+								value={this.props.wallet.getChainId()}
+								onChange={(e) => {
+									this.props.wallet.setChainId(Number(e.target.value));
+									this.disconnectWallet();
+								}}>
+								<option value={4}>Rinkeby Testnet</option>
+								<option value={97}>BSC Testnet</option>
+							</select>
+						</li>
                             <li className="nav_letter">
                                 {this.props.wallet._address ?
                                     <div onClick={this.disconnectWallet} className="wallet-connect">
