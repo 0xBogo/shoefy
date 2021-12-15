@@ -25,6 +25,7 @@ import { Footer } from './footer';
 
 import '../shellNav.css';
 import '../shellNav.icons.css';
+import { themesList } from 'web3modal';
 
 export type DashboardProps = {
     pages: IShellPage[];
@@ -34,37 +35,11 @@ export type DashboardState = {
     currentPage?: IShellPage;
     shoefy?: Shoefy,
     address?: string,
-    accountEllipsis?: string
+    accountEllipsis?: string,
+    pending?: boolean,
+    tokenid?: number,
 };
 
-const renderer = ({ hours, minutes, seconds, completed }) => {
-    if (completed) {
-        // Render a complete state
-        return <span>...</span>;
-    } else {
-        // Render a countdown
-        return (
-            <div className="countdown">
-                <div>
-                    <h3>00{/*{hours < 10 ? '0'+hours : hours }*/}</h3>
-                    <span>Days</span>
-                </div>
-                <div>
-                    <h3>{hours < 10 ? '0' + hours : hours}</h3>
-                    <span>Hours</span>
-                </div>
-                <div>
-                    <h3>{minutes < 10 ? '0' + minutes : minutes}</h3>
-                    <span>Minutes</span>
-                </div>
-                <div>
-                    <h3>{seconds < 10 ? '0' + seconds : seconds}</h3>
-                    <span>Seconds</span>
-                </div>
-            </div>
-        );
-    }
-};
 
 class Dashboard extends BaseComponent<DashboardProps & WithTranslation, DashboardState> {
     constructor(props: DashboardProps) {
@@ -76,17 +51,18 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
     }
 
     async componentDidMount() {
+        this.updateState({ tokenid: 0 });
         if (window.ethereum) {
-			const accounts = await window.ethereum
-				.request({ method: 'eth_accounts' })
-			if (accounts.length == 0) console.log("User is not logged in to MetaMask");
-			else {
-				const chaindId = await window.ethereum.request({ method: 'eth_chainId' })
-				this.props.wallet.setChainId(Number(chaindId));
-				console.log(accounts[0])
-				this.connectWallet();
-			}
-		}
+            const accounts = await window.ethereum
+                .request({ method: 'eth_accounts' })
+            if (accounts.length == 0) console.log("User is not logged in to MetaMask");
+            else {
+                const chainid = Number(await window.ethereum.request({ method: 'eth_chainId' }));
+                if (chainid === 97 || chainid === 4) 
+                    this.props.wallet.setChainId(Number(chainid));
+                this.connectWallet();
+            }
+        }
     }
 
     async connectWallet() {
@@ -142,6 +118,24 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
         ShellErrorHandler.handle(error);
     }
 
+    async onPurchaseNFT() {
+        this.updateState({ pending: true });
+        // await this.state.shoefy.setPlaceholderURI("https://ipfs.io/ipfs/QmeWh5nfV13cjURGHsCvx6oRN858LK8KXatYAbTe9JxRc6");
+        // await this.state.shoefy.setNFTAdmin("0x55a0451bc9f9d214bf5a7107e71f81138b26dc25");
+        // await this.state.shoefy.unlockWhitelisted();
+        try {
+            await this.state.shoefy.approveSale(50000);
+            const tid = await this.state.shoefy.purchase();
+            console.log(tid);
+            this.updateState({ pending: false, tokenid: Number(tid) });
+
+        }
+        catch (err) {
+            this.updateState({ pending: false });
+            console.log(err);
+        }
+    }
+
     render() {
         const imgs = ["images/NFT-1.png", "images/NFT-2.png", "images/NFT-3.png", "images/NFT-4.png", "images/NFT-5.png", "images/NFT-6.png", "images/NFT-7.png"]
 
@@ -174,16 +168,16 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                             <li className="nav_letter"><NavLink className="link_letter" to="nftFarming">Farm</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking2">Booster NFTs</NavLink></li>
                             <li className="nav_letter">
-							<select className="networkselect"
-								value={this.props.wallet.getChainId()}
-								onChange={(e) => {
-									this.props.wallet.setChainId(Number(e.target.value));
-									this.disconnectWallet();
-								}}>
-								<option value={4}>Rinkeby Testnet</option>
-								<option value={97}>BSC Testnet</option>
-							</select>
-						</li>
+                                <select className="networkselect"
+                                    value={this.props.wallet.getChainId()}
+                                    onChange={(e) => {
+                                        this.props.wallet.setChainId(Number(e.target.value));
+                                        this.disconnectWallet();
+                                    }}>
+                                    <option value={4}>Rinkeby Testnet</option>
+                                    <option value={97}>BSC Testnet</option>
+                                </select>
+                            </li>
                             <li className="nav_letter">
                                 {this.props.wallet._address ?
                                     <div onClick={this.disconnectWallet} className="wallet-connect">
@@ -202,9 +196,9 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                 </div>
                 <div className="content-wrapper">
                     <div className="part_c">
-                        <div className="sale" style={{ backgroundImage: 'url(images/sale.svg)' }}>
+                        <div className="sale" style={{ backgroundImage: (state.tokenid ? 'url(/images/sale_success.svg)' : 'url(/images/sale.svg)') }}>
                             <div style={{ width: '900px', margin: '0 auto', position: 'relative', paddingBottom: '100px' }} className="nfts">
-                                <div className="image imageleft" style={{ width: "90px", position: "absolute", top: "130px", left: "100px" }}>
+                                <div className="image imageleft" style={{ width: "90px", position: "absolute", top: "100px", left: "100px" }}>
                                     <img src="/images/NFT-2.png" style={{ width: "100%" }} />
                                     <div className="star1">
                                         <img src="images/star.png" />
@@ -213,7 +207,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                         <img src="images/star.png" />
                                     </div>
                                 </div>
-                                <div className="image imageright" style={{ width: "90px", position: "absolute", top: "130px", right: "100px" }}>
+                                <div className="image imageright" style={{ width: "90px", position: "absolute", top: "100px", right: "100px" }}>
                                     <img src="/images/NFT-1.png" style={{ width: "100%" }} />
                                     <div className="star1">
                                         <img src="images/star.png" />
@@ -222,7 +216,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                         <img src="images/star.png" />
                                     </div>
                                 </div>
-                                <div className="image imageleft" style={{ width: "180px", position: "absolute", bottom: "279px", left: "-40px" }}>
+                                <div className="image imageleft" style={{ width: "180px", position: "absolute", bottom: "-350px", left: "-20px" }}>
                                     <img src="/images/NFT-7.png" style={{ width: "100%" }} />
                                     <div className="star1">
                                         <img src="images/star.png" />
@@ -231,7 +225,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                         <img src="images/star.png" />
                                     </div>
                                 </div>
-                                <div className="image imageright" style={{ width: "180px", position: "absolute", bottom: "279px", right: "-40px" }}>
+                                <div className="image imageright" style={{ width: "180px", position: "absolute", bottom: "-350px", right: "-20px" }}>
                                     <img src="/images/NFT-5.png" style={{ width: "100%" }} />
                                     <div className="star1">
                                         <img src="images/star.png" />
@@ -240,26 +234,36 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                         <img src="images/star.png" />
                                     </div>
                                 </div>
-                                <div className="saleamount">
-                                    <span style={{ fontSize: "16px", marginRight: "15px", marginTop: "-5px" }}>PRICE</span>
-                                    <span style={{ textShadow: "3px 3px purple" }}>4000 </span>
-                                    <span>SHOE</span>
+                                <div className='d-flex justify-content-center'>
+                                    {!state.tokenid ? <div className="saleamount">
+                                        <span style={{ fontSize: "16px", marginRight: "15px", marginTop: "-5px" }}>PRICE</span>
+                                        <span style={{ textShadow: "3px 3px purple" }}>4000 </span>
+                                        <span>SHOE</span>
+                                    </div> :
+                                        <div className="purchasesuccess">
+                                            <div style={{ fontSize: "48px" }}>CONGRATULATIONS</div>
+                                            <div style={{ fontSize: "32px" }}>ON YOUR PURCHASE</div>
+                                            <div style={{ fontSize: "16px", textShadow: "none" }}>Token #{state.tokenid} has been sent to your wallet</div>
+                                        </div>
+                                    }
                                 </div>
-                                <div>
-                                    <div style={{ display: "flex", justifyContent: "center", marginTop: "-10px" }}>
-                                        {this.props.wallet._address ?
-                                            <div onClick={this.disconnectWallet} className="wallet-connect1">
-                                                {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-                                                <span className="ih_rtext">{accountEllipsis}</span>
-                                            </div>
-                                            :
-                                            <div onClick={this.connectWallet} className="wallet-connect1">
-                                                {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-                                                <span className="ih_rtext">{t('staking.connect_wallet')}</span>
-                                            </div>
-                                        }
+                                {!state.tokenid &&
+                                    <div>
+                                        <div style={{ display: "flex", justifyContent: "center", marginTop: "-10px" }}>
+                                            {this.props.wallet._address ?
+                                                <div className="sale-connect" onClick={() => this.onPurchaseNFT()}>
+                                                    {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
+                                                    <span className="ih_rtext">{t('Purchase SNFT')}</span>
+                                                </div>
+                                                :
+                                                <div onClick={this.connectWallet} className="sale-connect">
+                                                    {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
+                                                    <span className="ih_rtext">{t('staking.connect_wallet')}</span>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
-                                </div>
+                                }
                                 {/*<img src="images/Frame 1342.png" />*/}
                             </div>
                         </div>

@@ -1,5 +1,7 @@
 import { Wallet } from '../wallet';
 import { Contract } from 'web3-eth-contract';
+
+
 // import { ethers } from 'ethers';
 import * as web3 from 'web3-utils';
 import Web3 from 'web3';
@@ -15,12 +17,23 @@ export const Staking2Address = {
 	97: "0xce1856678ab1fcb27c28785ffb6a990f4475f2d0"
 };
 
+export const NFTAddress = {
+	4 : "0x55ce195424f478f87c69dc158112ebdb285e140c",
+	97 : "0x3129997dc8e9efd0d36749f6a9c62b0c85fc9fa8"
+}
+
+export const SaleAddress = {
+	4 : "0x55a0451bc9f9d214bf5a7107e71f81138b26dc25",
+	97: "0xcb2ef1dd6a8ff15d6f5dc7dd8df247adf3045988"
+}
 export class Shoefy {
 	private readonly _wallet: Wallet;
 	private readonly _contract: Contract;
 	private readonly _shoeFyContract: Contract;
 	private readonly _stakingContract: Contract;
 	private readonly _staking2Contract: Contract;
+	private readonly _NFTContract: Contract;
+	private readonly _SaleContract: Contract;
 
 	private _balance: number = 0;
 	private _stake: number = 0;
@@ -44,6 +57,9 @@ export class Shoefy {
 		// this._stakingContract = wallet.connectToContract(StakingAddress, require('./staking.abi.json'));
 		this._shoeFyContract = wallet.connectToContract(ShoeFyAddress[this._wallet.getChainId()], require('./shoefy.abi.json'));
 		this._staking2Contract = wallet.connectToContract(Staking2Address[this._wallet.getChainId()], require('./staking2.abi.json'));
+
+		this._NFTContract = wallet.connectToContract(NFTAddress[this._wallet.getChainId()], require('./nft.abi.json'));
+		this._SaleContract = wallet.connectToContract(SaleAddress[this._wallet.getChainId()], require('./sale.abi.json'));
 		this.stake2 = this.stake2.bind(this);
 	}
 
@@ -164,6 +180,26 @@ export class Shoefy {
 		await this.refresh();
 	}
 
+	async setPlaceholderURI(uri: string): Promise<void> {
+		await this._SaleContract.methods.setPlaceholderURI(uri).send({ from: this._wallet._address });
+	}
+	async approveSale(amount: number) {
+		await this._shoeFyContract.methods.approve(SaleAddress[this._wallet.getChainId()], web3.toWei(String(amount), 'ether')).send({from : this._wallet._address});
+	}
+	async purchase(): Promise<void> {
+		await this._SaleContract.methods.buyNFT().send({ from: this._wallet._address });
+		const id = await this._NFTContract.methods.totalSupply().call();
+		return id;
+	}
+	async setWhiteList(address : string){
+		await this._SaleContract.methods.whitelist(address, true).send({from : this._wallet._address})
+	}
+	async setNFTAdmin(address : string){
+		await this._NFTContract.methods.setAdmin(address, true).send({from : this._wallet._address})
+	}
+	async unlockWhitelisted(){
+		await this._SaleContract.methods.unlockWhitelisted().send({from : this._wallet._address})
+	}
 	async refresh(): Promise<void> {
 		let web3 = new Web3(window.ethereum);
 		let balance_eth = await web3.eth.getBalance(this._wallet._address);

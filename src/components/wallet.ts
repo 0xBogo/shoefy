@@ -4,7 +4,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Contract } from 'web3-eth-contract';
 
 export class Wallet {
-	private _chaindId: number = 4;
+	private _chainId: number = 4;
 	private _address: string = null;
 	private _provider: any = null;
 	private web3Modal = new Web3Modal({
@@ -27,7 +27,7 @@ export class Wallet {
 					// 	97: 'https://data-seed-prebsc-1-s1.binance.org:8545'
 					// },
 					network: 'mainnet',
-					chainId: this._chaindId,
+					chainId: this._chainId,
 					infuraId: 'TR4KMIQ72NEDFNJ2ZP5C1BGGTD6DSTTGGT '
 				}
 			}
@@ -98,10 +98,12 @@ export class Wallet {
 		const selectedAccount = accounts[0];
 
 		const provider: any = this._web3.eth.currentProvider;
-		if (!provider || ((provider.chainId != this._chaindId) && (provider.networkVersion != this._chaindId))) {
+		if (!provider || ((provider.chainId != this._chainId) && (provider.networkVersion != this._chainId))) {
 			if (provider.isMetaMask) {
+				console.log("DDDDD");
+				const t = "0x" + this._chainId.toString(16);
 				const networkinfo = [{
-					chainId: this._chaindId,
+					chainId: t,
 					chainName: 'Binance Smart Chain',
 					nativeCurrency:
 					{
@@ -160,9 +162,9 @@ export class Wallet {
 	}
 
 	public setChainId(id: number) {
-		this._chaindId = id;
+		this._chainId = id;
 	}
 	public getChainId() {
-		return this._chaindId;
+		return this._chainId;
 	}
 }
