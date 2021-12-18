@@ -126,7 +126,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 				console.log(state.unstakeBlanace2[step]);
 				const dates = [30, 60, 90]
 				if (state.unstakeBlanace2[step] != 0) {
-					NotificationManager.warning(`You already stake in ${dates[step]}days`);
+					NotificationManager.warning(`You already staked in ${dates[step]}days`);
 					return;
 				}
 				if (state.tokencaps2[step] < state.ctValueStake2[step]) {
