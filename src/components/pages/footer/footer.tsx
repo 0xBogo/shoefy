@@ -10,7 +10,7 @@ function Footer() {
     return (
         <div className="i_footer"> 
             <div className="if_left">
-                <span className="ifl1">Copyright @2021 Shoefy Vesting Portal</span>
+                {/* <span className="ifl1">Copyright @2021 Shoefy Vesting Portal</span> */}
             </div>
         </div>
     );

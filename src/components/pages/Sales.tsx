@@ -58,7 +58,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
             if (accounts.length == 0) console.log("User is not logged in to MetaMask");
             else {
                 const chainid = Number(await window.ethereum.request({ method: 'eth_chainId' }));
-                if (chainid === 97 || chainid === 4) 
+                if (chainid === 97 || chainid === 4)
                     this.props.wallet.setChainId(Number(chainid));
                 this.connectWallet();
             }
@@ -235,16 +235,12 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                     </div>
                                 </div>
                                 <div className='d-flex justify-content-center'>
-                                    {!state.tokenid ? <div className="saleamount">
-                                        <span style={{ fontSize: "16px", marginRight: "15px", marginTop: "-5px" }}>PRICE</span>
-                                        <span style={{ textShadow: "3px 3px purple" }}>4000 </span>
-                                        <span>SHOE</span>
-                                    </div> :
+                                    {state.tokenid ?
                                         <div className="purchasesuccess">
                                             <div style={{ fontSize: "48px" }}>CONGRATULATIONS</div>
                                             <div style={{ fontSize: "32px" }}>ON YOUR PURCHASE</div>
                                             <div style={{ fontSize: "16px", textShadow: "none" }}>Token #{state.tokenid} has been sent to your wallet</div>
-                                        </div>
+                                        </div> : <></>
                                     }
                                 </div>
                                 {!state.tokenid &&
