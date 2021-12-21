@@ -6,15 +6,15 @@ import { Contract } from 'web3-eth-contract';
 import * as web3 from 'web3-utils';
 import Web3 from 'web3';
 export const ShoeFyAddress = {
-	4: "0x868c05b8c8a51c72e362cdc50364ed86595f7b8e",
+	4: "0x868c05B8c8a51c72e362CdC50364ED86595f7b8e",
 	97: "0x4c687a9158F31321aD76eC7185C458201B375582"
 };
 export const StakingAddress = "0x86bdb4ea03f1b5158229c8fd15dca51310dc4661";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
 
 export const Staking2Address = {
-	4: "0x13e16236d8eb65138d6e17dda846231df0407004",
-	97: "0xce1856678ab1fcb27c28785ffb6a990f4475f2d0"
+	4: "0x5a73c86898fe04d4e92eb1b8ed206ba695ffa96e",
+	97: "0x9c43e0274f7182d592fb132157ee0d22a8bb3cc4"
 };
 
 export const NFTAddress = {
