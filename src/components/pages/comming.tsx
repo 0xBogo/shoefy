@@ -77,16 +77,16 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
 
     async componentDidMount() {
         if (window.ethereum) {
-			const accounts = await window.ethereum
-				.request({ method: 'eth_accounts' })
-			if (accounts.length == 0) console.log("User is not logged in to MetaMask");
-			else {
-				const chainid = Number(await window.ethereum.request({ method: 'eth_chainId' }));
+            const accounts = await window.ethereum
+                .request({ method: 'eth_accounts' })
+            if (accounts.length == 0) console.log("User is not logged in to MetaMask");
+            else {
+                const chainid = Number(await window.ethereum.request({ method: 'eth_chainId' }));
                 if (chainid === 97 || chainid === 4)
                     this.props.wallet.setChainId(Number(chainid));
                 this.connectWallet();
-			}
-		}
+            }
+        }
     }
 
     async connectWallet() {
@@ -152,7 +152,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
         const accountEllipsis = this.props.wallet._address ? `${this.props.wallet._address.substring(0, 4)}...${this.props.wallet._address.substring(this.props.wallet._address.length - 4)}` : '___';
 
         return (
-            <div>
+            <>
                 <div className="navigation-wrapper">
                     <div className="logo-wrapper">
                         <a href="/home">
@@ -172,16 +172,16 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                             <li className="nav_letter"><NavLink className="link_letter" to="nftFarming">Farm</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking2">Booster NFTs</NavLink></li>
                             <li className="nav_letter">
-							<select className="networkselect"
-								value={this.props.wallet.getChainId()}
-								onChange={(e) => {
-									this.props.wallet.setChainId(Number(e.target.value));
-									this.disconnectWallet();
-								}}>
-								<option value={4}>Rinkeby Testnet</option>
-								<option value={97}>BSC Testnet</option>
-							</select>
-						</li>
+                                <select className="networkselect"
+                                    value={this.props.wallet.getChainId()}
+                                    onChange={(e) => {
+                                        this.props.wallet.setChainId(Number(e.target.value));
+                                        this.disconnectWallet();
+                                    }}>
+                                    <option value={4}>Rinkeby Testnet</option>
+                                    <option value={97}>BSC Testnet</option>
+                                </select>
+                            </li>
                             <li className="nav_letter">
                                 {this.props.wallet._address ?
                                     <div onClick={this.disconnectWallet} className="wallet-connect">
@@ -198,7 +198,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                         </ul>
                     </nav>
                 </div>
-                <div className="content-wrapper">
+                <div className="content-wrapper comming">
                     <div className="part_c">
                         <div className="comming" style={{ backgroundImage: 'url(images/Frame1342.png)' }}>
                             <div style={{ width: '900px', margin: '0 auto', position: 'relative', paddingBottom: '100px' }} className="nfts">
@@ -220,7 +220,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                         <img src="images/star.png" />
                                     </div>
                                 </div>
-                                <div className="image imageleft" style={{ width: "240px", position: "absolute", bottom: "0", left: "-100px" }}>
+                                <div className="image imageleft" style={{ width: "240px", position: "absolute", bottom: "-430px", left: "-100px" }}>
                                     <img src="/images/NFT-7.png" style={{ width: "100%" }} />
                                     <div className="star1">
                                         <img src="images/star.png" />
@@ -229,7 +229,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                         <img src="images/star.png" />
                                     </div>
                                 </div>
-                                <div className="image imageright" style={{ width: "240px", position: "absolute", bottom: "0", right: "-100px" }}>
+                                <div className="image imageright" style={{ width: "240px", position: "absolute", bottom: "-430px", right: "-100px" }}>
                                     <img src="/images/NFT-5.png" style={{ width: "100%" }} />
                                     <div className="star1">
                                         <img src="images/star.png" />
@@ -238,19 +238,21 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                         <img src="images/star.png" />
                                     </div>
                                 </div>
-                                <div className="comingtitle">COMING SOON</div>
                                 <div>
-                                    <Countdown date={presaleTime} renderer={renderer} />
+                                    {/* <Countdown date={presaleTime} renderer={renderer} /> */}
                                 </div>
                                 {/*<img src="images/Frame 1342.png" />*/}
                             </div>
                         </div>
                     </div>
+
                     <div className="part_f">
                         <Footer />
                     </div>
                 </div>
-            </div>
+                <div className="comingtitle">COMING SOON</div>
+
+            </>
         );
     }
 }

@@ -193,7 +193,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                             </div>
                             <div style={{ position: "relative" }}>
                                 <div className="title">SHOEFY LEGENDARY</div>
-                                <div className="smalltext">Unleash the legendary SHOEFY that are being sealed.</div>
+                                {/* <div className="smalltext">Unleash the legendary SHOEFY that are being sealed.</div>
                                 <div style={{ display: "flex", justifyContent: "center" }}>
                                     {this.props.wallet._address ?
                                         <div onClick={this.disconnectWallet} className="wallet-connect1">
@@ -206,7 +206,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                             <span className="ih_rtext">{t('staking.connect_wallet')}</span>
                                         </div>
                                     }
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
