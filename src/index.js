@@ -32,7 +32,7 @@ import './i18n';
 const pagesInNavigator = [
 	{ id: 'home', title: 'Home', component: Dashboard },
 	{ id: 'shoefyStaking', title: 'NFT Staking', component: StakingComponent },
-	{ id: 'snftStaking', title: 'Shoe Staking', component: NFTStakingComponent},
+	{ id: 'snftStaking', title: 'SHOE Staking', component: NFTStakingComponent},
 	// { id: 'nftStaking', title: 'Farm', component: NFTStakingComponent},
 	{ id: 'nftStaking', title: 'Farm', component: Comming},
 	// { id: 'shoefyStaking2', title: 'Booster NFTs', component: Staking2Component},
