@@ -137,8 +137,8 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                     <nav id="mainNav">
                         <ul className="navbar-nav">
                             <li className="nav_letter1"><NavLink className="link_letter" to="sales">Sales</NavLink></li>
-                            <li className="nav_letter1"><NavLink className="link_letter" to="nftStaking">NFTs Staking</NavLink></li>
-                            <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking">Shoe Staking</NavLink></li>
+                            <li className="nav_letter1"><NavLink className="link_letter" to="nftStaking">sNFT  Staking</NavLink></li>
+                            <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking">SHOE Staking</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="nftFarming">Farm</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking2">Booster NFTs</NavLink></li>
                             <li className="nav_letter">
@@ -192,7 +192,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
 
                             </div>
                             <div style={{ position: "relative" }}>
-                                <div className="title">SHOEFY LEGENDARY</div>
+                                <div className="title">Welcome to ShoeFy Platform</div>
                                 {/* <div className="smalltext">Unleash the legendary SHOEFY that are being sealed.</div>
                                 <div style={{ display: "flex", justifyContent: "center" }}>
                                     {this.props.wallet._address ?

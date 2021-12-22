@@ -478,8 +478,8 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 					<nav id="mainNav">
 						<ul className="navbar-nav">
 							<li className="nav_letter1"><NavLink className="link_letter" to="sales">Sales</NavLink></li>
-							<li className="nav_letter1"><NavLink className="link_letter" to="nftStaking">NFTs Staking</NavLink></li>
-							<li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking">Shoe Staking</NavLink></li>
+							<li className="nav_letter1"><NavLink className="link_letter" to="nftStaking">sNFT  Staking</NavLink></li>
+							<li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking">SHOE Staking</NavLink></li>
 							<li className="nav_letter"><NavLink className="link_letter" to="nftFarming">Farm</NavLink></li>
 							<li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking2">Booster NFTs</NavLink></li>
 							<li className="nav_letter">
@@ -516,7 +516,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 								<FadeInLeftDiv className="col-md-12 d-flex">
 									<div className="shadow d-flex flex-column flex-fill gradient-card primary user-info">
 										<h1 className="user-info-title">Staking Info</h1>
-										<p>One wallet can stake only once in each pool</p>
+										<p>Users can stake only one time with same wallet in each pool</p>
 										<div className="user-info-body">
 
 											<div className="infoitem">

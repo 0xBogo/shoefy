@@ -163,8 +163,8 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                     <nav id="mainNav">
                         <ul className="navbar-nav">
                             <li className="nav_letter1"><NavLink className="link_letter" to="sales">Sales</NavLink></li>
-                            <li className="nav_letter1"><NavLink className="link_letter" to="nftStaking">NFTs Staking</NavLink></li>
-                            <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking">Shoe Staking</NavLink></li>
+                            <li className="nav_letter1"><NavLink className="link_letter" to="nftStaking">sNFT  Staking</NavLink></li>
+                            <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking">SHOE Staking</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="nftFarming">Farm</NavLink></li>
                             <li className="nav_letter"><NavLink className="link_letter" to="shoefyStaking2">Booster NFTs</NavLink></li>
                             <li className="nav_letter">
@@ -194,7 +194,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                         </ul>
                     </nav>
                 </div>
-                <div className="content-wrapper">
+                <div className="content-wrapper comming">
                     <div className="part_c">
                         <div className="sale" style={{ backgroundImage: (state.tokenid ? 'url(/images/sale_success.svg)' : 'url(/images/sale.svg)') }}>
                             <div style={{ width: '900px', margin: '0 auto', position: 'relative', paddingBottom: '100px' }} className="nfts">
@@ -243,7 +243,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                         </div> : <></>
                                     }
                                 </div>
-                                {!state.tokenid &&
+                                {/* {!state.tokenid &&
                                     <div>
                                         <div style={{ display: "flex", justifyContent: "center", marginTop: "-10px" }}>
                                             {this.props.wallet._address ?
@@ -259,7 +259,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                             }
                                         </div>
                                     </div>
-                                }
+                                } */}
                                 {/*<img src="images/Frame 1342.png" />*/}
                             </div>
                         </div>
@@ -268,6 +268,8 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                         <Footer />
                     </div>
                 </div>
+                <div className="comingtitle">COMING SOON</div>
+
             </div>
         );
     }
