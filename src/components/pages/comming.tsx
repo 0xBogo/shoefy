@@ -14,8 +14,7 @@ import Countdown from "react-countdown";
 import { withWallet } from '../walletContext';
 
 import mark from '../../../src/images/mark.png';
-import mark1 from '../../../src/images/mark1.png';
-import FoxImg from '../../images/fox.png';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
@@ -34,7 +33,10 @@ export type DashboardState = {
     currentPage?: IShellPage;
     shoefy?: Shoefy,
     address?: string,
-    accountEllipsis?: string
+    accountEllipsis?: string,
+    pending: boolean,
+    wallet: Wallet,
+    looping: boolean,
 };
 
 const renderer = ({ hours, minutes, seconds, completed }) => {
@@ -82,7 +84,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
             if (accounts.length == 0) console.log("User is not logged in to MetaMask");
             else {
                 const chainid = Number(await window.ethereum.request({ method: 'eth_chainId' }));
-                if (chainid === 97 || chainid === 4)
+                if (chainid === 56 || chainid === 4)
                     this.props.wallet.setChainId(Number(chainid));
                 this.connectWallet();
             }
@@ -179,7 +181,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                         this.disconnectWallet();
                                     }}>
                                     <option value={4}>Rinkeby Testnet</option>
-                                    <option value={97}>BSC Testnet</option>
+                                    <option value={56}>BSC Mainnet</option>
                                 </select>
                             </li>
                             <li className="nav_letter">

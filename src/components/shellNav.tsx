@@ -11,15 +11,8 @@ import './shellNav.css';
 import './shellNav.icons.css';
 import { Wallet } from './wallet';
 import { withWallet } from './walletContext';
-import { ShoefyNFTStaking } from './contracts/nftStaking';
-
-import CachedIcon from '@mui/icons-material/Cached';
-import AppsIcon from '@mui/icons-material/Apps';
-import InputIcon from '@mui/icons-material/Input';
 
 import mark from '../../src/images/mark.png';
-import mark1 from '../../src/images/mark1.png';
-import FoxImg from '../images/fox.png';
 
 import { Shoefy } from './contracts/shoefy';
 
@@ -32,7 +25,10 @@ export type ShellNavState = {
 	currentPage?: IShellPage;
 	shoefy?: Shoefy,
 	address?: string,
-	accountEllipsis?: string
+	accountEllipsis?: string,
+	pending: boolean,
+	wallet : Wallet,
+	looping : boolean
 };
 
 class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavState> {
@@ -51,12 +47,11 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 			if (accounts.length == 0) console.log("User is not logged in to MetaMask");
 			else {
 				const chainid = Number(await window.ethereum.request({ method: 'eth_chainId' }));
-                if (chainid === 97 || chainid === 4)
-				{
+				if (chainid === 56 || chainid === 4) {
 					alert(chainid);
-                    this.props.wallet.setChainId(Number(chainid));
+					this.props.wallet.setChainId(Number(chainid));
 				}
-                this.connectWallet();
+				this.connectWallet();
 			}
 		}
 	}
@@ -103,8 +98,8 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 		const shoefy = this.readState().shoefy;
 
 		this.updateState({
-			address: this.props.wallet._address,
-			accountEllipsis: this.props.wallet._address ? `${this.props.wallet._address.substring(0, 4)}...${this.props.wallet._address.substring(this.props.wallet._address.length - 4)}` : '___'
+			address: this.props.wallet.getAddress(),
+			accountEllipsis: this.props.wallet.getAddress() ? `${this.props.wallet.getAddress().substring(0, 4)}...${this.props.wallet.getAddress().substring(this.props.wallet.getAddress().length - 4)}` : '___'
 		});
 
 		return true;
@@ -151,11 +146,11 @@ class ShellNav extends BaseComponent<ShellNavProps & WithTranslation, ShellNavSt
 									this.disconnectWallet();
 								}}>
 								<option value={4}>Rinkeby Testnet</option>
-								<option value={97}>BSC Testnet</option>
+								<option value={56}>BSC Mainnet</option>
 							</select>
 						</li>
 						<li className="nav_letter">
-							{this.props.wallet._address ?
+							{this.props.wallet.getAddress() ?
 								<div onClick={this.disconnectWallet} className="wallet-connect">
 									{state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
 									<span className="ih_rtext">{this.state.accountEllipsis}</span>
