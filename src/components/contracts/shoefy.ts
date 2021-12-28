@@ -7,23 +7,25 @@ import * as web3 from 'web3-utils';
 import Web3 from 'web3';
 export const ShoeFyAddress = {
 	4: "0x868c05B8c8a51c72e362CdC50364ED86595f7b8e",
-	97: "0x4c687a9158F31321aD76eC7185C458201B375582"
+	97: "0x4c687a9158F31321aD76eC7185C458201B375582",
+	56: "0xc0F42b31D154234A0A3eBE7ec52c662101C1D9BC"
 };
 export const StakingAddress = "0x86bdb4ea03f1b5158229c8fd15dca51310dc4661";
 export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93";
 
 export const Staking2Address = {
 	4: "0x5a73c86898fe04d4e92eb1b8ed206ba695ffa96e",
-	97: "0x9c43e0274f7182d592fb132157ee0d22a8bb3cc4"
+	97: "0x9c43e0274f7182d592fb132157ee0d22a8bb3cc4",
+	56: "0x0b788e007a10731aa4bff8bf6961f870dc3d3199"
 };
 
 export const NFTAddress = {
-	4 : "0x55ce195424f478f87c69dc158112ebdb285e140c",
-	97 : "0x3129997dc8e9efd0d36749f6a9c62b0c85fc9fa8"
+	4: "0x55ce195424f478f87c69dc158112ebdb285e140c",
+	97: "0x3129997dc8e9efd0d36749f6a9c62b0c85fc9fa8"
 }
 
 export const SaleAddress = {
-	4 : "0x55a0451bc9f9d214bf5a7107e71f81138b26dc25",
+	4: "0x55a0451bc9f9d214bf5a7107e71f81138b26dc25",
 	97: "0xcb2ef1dd6a8ff15d6f5dc7dd8df247adf3045988"
 }
 export class Shoefy {
@@ -43,7 +45,7 @@ export class Shoefy {
 	private _claimedRewards2: any = [];
 	private _lockedBalance2: number = 0;
 	private _apr: number = 0;
-	private _balance_eth: number = 0;
+	private _balance_eth: string = '';
 	private _locktime: number = 0;
 	private _stake2: any = [];
 	private _unstake2: any = [];
@@ -75,7 +77,7 @@ export class Shoefy {
 	get balance(): number {
 		return this._balance;
 	}
-	get balance_eth(): number {
+	get balance_eth(): string {
 		return this._balance_eth;
 	}
 	get stakedBalance(): number {
@@ -125,21 +127,18 @@ export class Shoefy {
 		return this._tokencaps2;
 	}
 	async approve(amount: number): Promise<void> {
-		let flag = await this._shoeFyContract.methods.approve(StakingAddress, amount).send({ 'from': this._wallet._address });
+		let flag = await this._shoeFyContract.methods.approve(StakingAddress, amount).send({ 'from': this._wallet.getAddress() });
 		return flag;
-
 	}
 
 	async approve2(amount: any): Promise<void> {
-
-		let flag = await this._shoeFyContract.methods.approve(Staking2Address[this.wallet.getChainId()], amount).send({ 'from': this._wallet._address });
+		let flag = await this._shoeFyContract.methods.approve(Staking2Address[this.wallet.getChainId()], amount).send({ 'from': this._wallet.getAddress() });
 		return flag
-
 	}
 
 	async stake2(amount: number, stakestep: number): Promise<void> {
 		if (this._balance >= amount) {
-			await this._staking2Contract.methods.stake(web3.toWei(String(amount), 'ether'), stakestep).send({ 'from': this._wallet._address });
+			await this._staking2Contract.methods.stake(web3.toWei(String(amount), 'ether'), stakestep).send({ 'from': this._wallet.getAddress() });
 		}
 		else {
 			throw 'Your shoefy balance is not sufficient to stake this amount';
@@ -150,7 +149,7 @@ export class Shoefy {
 		await this.refresh();
 
 		if (this._balance >= amount) {
-			await this._stakingContract.methods.stakeIn(web3.toWei(String(amount), 'ether')).send({ 'from': this._wallet._address });
+			await this._stakingContract.methods.stakeIn(web3.toWei(String(amount), 'ether')).send({ 'from': this._wallet.getAddress() });
 		}
 		else {
 			throw 'Your shoefy balance is not sufficient to stake this amount';
@@ -159,7 +158,7 @@ export class Shoefy {
 	async unstakeAndClaim(amount: number): Promise<void> {
 		await this.refresh();
 		if (this._stake >= amount) {
-			await this._stakingContract.methods.withdrawStake(web3.toWei(String(amount), 'ether')).send({ 'from': this._wallet._address });
+			await this._stakingContract.methods.withdrawStake(web3.toWei(String(amount), 'ether')).send({ 'from': this._wallet.getAddress() });
 		}
 		else {
 			throw 'Your staked shoefy balance is not sufficient to unstake this amount';
@@ -169,54 +168,48 @@ export class Shoefy {
 		const rates = [275, 350, 500];
 		// alert(amount);
 		// if (amount > 0) {
-		await this._staking2Contract.methods.withdraw(step).send({ 'from': this._wallet._address });
+		await this._staking2Contract.methods.withdraw(step).send({ 'from': this._wallet.getAddress() });
 		// }
 		// else {
 		// throw 'Your staked shoefy balance is not sufficient to unstake this amount';
 		// }
 	}
 	async claim(): Promise<void> {
-		await this._stakingContract.methods.claimStakingRewards().send({ 'from': this._wallet._address });
+		await this._stakingContract.methods.claimStakingRewards().send({ 'from': this._wallet.getAddress() });
 		await this.refresh();
 	}
 
 	async setPlaceholderURI(uri: string): Promise<void> {
-		await this._SaleContract.methods.setPlaceholderURI(uri).send({ from: this._wallet._address });
+		await this._SaleContract.methods.setPlaceholderURI(uri).send({ from: this._wallet.getAddress() });
 	}
 	async approveSale(amount: number) {
-		await this._shoeFyContract.methods.approve(SaleAddress[this._wallet.getChainId()], web3.toWei(String(amount), 'ether')).send({from : this._wallet._address});
+		await this._shoeFyContract.methods.approve(SaleAddress[this._wallet.getChainId()], web3.toWei(String(amount), 'ether')).send({ from: this._wallet.getAddress() });
 	}
 	async purchase(): Promise<void> {
-		await this._SaleContract.methods.buyNFT().send({ from: this._wallet._address });
+		await this._SaleContract.methods.buyNFT().send({ from: this._wallet.getAddress() });
 		const id = await this._NFTContract.methods.totalSupply().call();
 		return id;
 	}
-	async setWhiteList(address : string){
-		await this._SaleContract.methods.whitelist(address, true).send({from : this._wallet._address})
+	async setWhiteList(address: string) {
+		await this._SaleContract.methods.whitelist(address, true).send({ from: this._wallet.getAddress() })
 	}
-	async setNFTAdmin(address : string){
-		await this._NFTContract.methods.setAdmin(address, true).send({from : this._wallet._address})
+	async setNFTAdmin(address: string) {
+		await this._NFTContract.methods.setAdmin(address, true).send({ from: this._wallet.getAddress() })
 	}
-	async unlockWhitelisted(){
-		await this._SaleContract.methods.unlockWhitelisted().send({from : this._wallet._address})
+	async unlockWhitelisted() {
+		await this._SaleContract.methods.unlockWhitelisted().send({ from: this._wallet.getAddress() })
 	}
 	async refresh(): Promise<void> {
 		let web3 = new Web3(window.ethereum);
-		let balance_eth = await web3.eth.getBalance(this._wallet._address);
-		// console.log((web3.utils.fromWei(balance_eth, "ether")+" ETH"));
+		let balance_eth = await web3.eth.getBalance(this._wallet.getAddress());
 
 		this._balance_eth = parseFloat((web3.utils.fromWei(balance_eth, "ether"))).toFixed(3);
-		// console.log(this._balance_eth)
-		this._balance = Math.floor(await this._shoeFyContract.methods.balanceOf(this._wallet._address).call() / (10 ** 12)) / (10 ** 6);
-		// this._stake = await this._stakingContract.methods.stakedBalanceOf(this._wallet._address).call() / (10 ** 18);
-		// this._pendingRewards = await this._stakingContract.methods.pendingRewards(this._wallet._address).call() / (10 ** 18);
-		// this._apr = await this._stakingContract.methods.getCurrentAPR().call() / 100;
-		// this._claimRewards = await this._stakingContract.methods.getClaimRewards(this._wallet._address).call() / Math.pow(10, 18);
 
-		// this._allowance = await this._shoeFyContract.methods.allowance(this._wallet._address, StakingAddress).call() / (10 ** 18);
-		this._allowance2 = await this._shoeFyContract.methods.allowance(this._wallet._address, Staking2Address[this.wallet.getChainId()]).call() / (10 ** 18);
+		this._balance = Math.floor(await this._shoeFyContract.methods.balanceOf(this._wallet.getAddress()).call() / (10 ** 12)) / (10 ** 6);
+
+		this._allowance2 = await this._shoeFyContract.methods.allowance(this._wallet.getAddress(), Staking2Address[this.wallet.getChainId()]).call() / (10 ** 18);
 		console.log(this._allowance2);
-		const stakers = await this._staking2Contract.methods.getStakeData(this._wallet._address).call();
+		const stakers = await this._staking2Contract.methods.getStakeData(this._wallet.getAddress()).call();
 		const time = await this._staking2Contract.methods.getblocktime().call();
 		const fees = await this._staking2Contract.methods.totalFee().call() / 1;
 		const claims = await this._staking2Contract.methods.totalreward.call().call() / Math.pow(10, 18);
@@ -233,7 +226,7 @@ export class Shoefy {
 		for (let i = 0; i < stakers.amount.length; i++) {
 			this._unstakable[i] = time - stakers.lockedtime[i];
 			this._stake2[i] = stakers.amount[i] / Math.pow(10, 18);
-			this._unstake2[i] = await this._staking2Contract.methods.getUnstakeValue(this._wallet._address, i).call() / Math.pow(10, 18);
+			this._unstake2[i] = await this._staking2Contract.methods.getUnstakeValue(this._wallet.getAddress(), i).call() / Math.pow(10, 18);
 			this._pendingRewards2[i] = (this._unstake2[i] - this._stake2[i]);
 			console.log(this._pendingRewards2[i]);
 		}

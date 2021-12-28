@@ -48,7 +48,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
             if (accounts.length == 0) console.log("User is not logged in to MetaMask");
             else {
                 const chainid = Number(await window.ethereum.request({ method: 'eth_chainId' }));
-                if (chainid === 97 || chainid === 4)
+                if (chainid === 56 || chainid === 4)
                     this.props.wallet.setChainId(Number(chainid));
                 this.connectWallet();
             }
@@ -149,7 +149,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                         this.disconnectWallet();
                                     }}>
                                     <option value={4}>Rinkeby Testnet</option>
-                                    <option value={97}>BSC Testnet</option>
+                                    <option value={56}>BSC Mainnet</option>
                                 </select>
                             </li>
                             <li className="nav_letter">
@@ -169,50 +169,35 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                     </nav>
                 </div>
                 <div className="content-wrapper">
-                    <div className="part_c">
-                        <div>
-                            <div className="back">
-                                <div className="main">
-                                    {
-                                        imgs.map((data, i) => {
-                                            return (
-                                                <div key={i} style={{ width: "120px", position: "absolute", top: "40px", left: "-60px" }}>
-                                                    <img src={data} style={{ width: "100%" }} />
-                                                    <div className="star1">
-                                                        <img src="images/star.png" />
-                                                    </div>
-                                                    <div className="star2">
-                                                        <img src="images/star.png" />
-                                                    </div>
+                    <div>
+                        <div className="back">
+                            <div className="main">
+                                {
+                                    imgs.map((data, i) => {
+                                        return (
+                                            <div key={i} style={{ width: "120px", position: "absolute", top: "40px", left: "-60px" }}>
+                                                <img src={data} style={{ width: "100%" }} />
+                                                <div className="star1">
+                                                    <img src="images/star.png" />
                                                 </div>
-                                            )
-                                        })
-                                    }<img src="images/main.png" style={{ position: "absolute", left: "50%", top: "0px", transform: "translate(-50% , 0%)", width: "650px" }} className="main-img" />
-                                </div>
+                                                <div className="star2">
+                                                    <img src="images/star.png" />
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                }
+                                <img src="images/main.png" style={{ position: "absolute", left: "50%", top: "0px", transform: "translate(-50% , 0%)", width: "650px" }} className="main-img" />
+                            </div>
 
-                            </div>
-                            <div style={{ position: "relative" }}>
-                                <div className="title">Welcome to ShoeFy Platform</div>
-                                {/* <div className="smalltext">Unleash the legendary SHOEFY that are being sealed.</div>
-                                <div style={{ display: "flex", justifyContent: "center" }}>
-                                    {this.props.wallet._address ?
-                                        <div onClick={this.disconnectWallet} className="wallet-connect1">
-                                            {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-                                            <span className="ih_rtext">{accountEllipsis}</span>
-                                        </div>
-                                        :
-                                        <div onClick={this.connectWallet} className="wallet-connect1">
-                                            {state.pending && <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true" > </span>}
-                                            <span className="ih_rtext">{t('staking.connect_wallet')}</span>
-                                        </div>
-                                    }
-                                </div> */}
-                            </div>
+                        </div>
+                        <div style={{ position: "relative" }}>
+                            <div className="title">Welcome to ShoeFy Platform</div>
                         </div>
                     </div>
-                    <div className="part_f">
-                        <Footer />
-                    </div>
+                </div>
+                <div className="part_f">
+                    <Footer />
                 </div>
             </div>
         );

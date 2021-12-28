@@ -104,18 +104,9 @@ export class Wallet {
 				const t = "0x" + this._chainId.toString(16);
 				const networkinfo = [{
 					chainId: t,
-					chainName: 'Binance Smart Chain',
-					nativeCurrency:
-					{
-						name: 'BNB',
-						symbol: 'BNB',
-						decimals: 18
-					},
-					rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545'],
-					blockExplorerUrls: ['https://bscscan.com/'],
-				}]
 
-				await ethereum.request({ method: 'wallet_addEthereumChain', params: networkinfo }).catch(function () {
+				}]
+				await window.web3.ethereum.request({ method: 'wallet_addEthereumChain', params: networkinfo }).catch(function () {
 					document.getElementById('modalswitch').click();
 					throw 'Please choose the BSC Testnet network as the current network in your wallet app !'
 				})
@@ -127,7 +118,7 @@ export class Wallet {
 		}
 
 		this._address = selectedAccount;
-		return this.isConnected;
+		return this.isConnected();
 	}
 
 	public async disconnect(): Promise<boolean> {
@@ -143,7 +134,7 @@ export class Wallet {
 			await this.web3Modal.clearCachedProvider();
 			this._provider = null;
 		}
-		return this.isConnected;
+		return this.isConnected();
 	}
 
 	public isConnected(): boolean {
@@ -166,5 +157,8 @@ export class Wallet {
 	}
 	public getChainId() {
 		return this._chainId;
+	}
+	public getAddress(){
+		return this._address;
 	}
 }
