@@ -48,7 +48,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
             if (accounts.length == 0) console.log("User is not logged in to MetaMask");
             else {
                 const chainid = Number(await window.ethereum.request({ method: 'eth_chainId' }));
-                if (chainid === 56 || chainid === 4)
+                if (chainid === 56 || chainid === 4 || chainid === 97)
                     this.props.wallet.setChainId(Number(chainid));
                 this.connectWallet();
             }
@@ -149,6 +149,7 @@ class Dashboard extends BaseComponent<DashboardProps & WithTranslation, Dashboar
                                         this.disconnectWallet();
                                     }}>
                                     <option value={4}>Rinkeby Testnet</option>
+                                    <option value={97}>BSC Testnet</option>
                                     <option value={56}>BSC Mainnet</option>
                                 </select>
                             </li>
