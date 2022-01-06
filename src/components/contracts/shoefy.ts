@@ -16,7 +16,8 @@ export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93
 export const Staking2Address = {
 	4: "0x5a73c86898fe04d4e92eb1b8ed206ba695ffa96e",
 	97: "0x9c43e0274f7182d592fb132157ee0d22a8bb3cc4",
-	56: "0x799dae1a15f75184700b0cE7DBD74Db6f0699973"
+	56: "0x799dae1a15f75184700b0cE7DBD74Db6f0699973",
+	1 : ""
 };
 
 export const NFTAddress = {
