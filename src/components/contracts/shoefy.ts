@@ -6,6 +6,7 @@ import { Contract } from 'web3-eth-contract';
 import * as web3 from 'web3-utils';
 import Web3 from 'web3';
 export const ShoeFyAddress = {
+	1 : "0x0fD67B4ceb9b607Ef206904eC73459c4880132c9",
 	4: "0x868c05B8c8a51c72e362CdC50364ED86595f7b8e",
 	97: "0x4c687a9158F31321aD76eC7185C458201B375582",
 	56: "0xc0F42b31D154234A0A3eBE7ec52c662101C1D9BC"
@@ -15,9 +16,9 @@ export const DonationWalletAddress = "0x50dF6f99c75Aeb6739CB69135ABc6dA77C588f93
 
 export const Staking2Address = {
 	4: "0x5a73c86898fe04d4e92eb1b8ed206ba695ffa96e",
-	97: "0x9c43e0274f7182d592fb132157ee0d22a8bb3cc4",
-	56: "0x799dae1a15f75184700b0cE7DBD74Db6f0699973",
-	1 : ""
+	97: "0x925980592b0e86e196aff5009a0224a2f8b4585c",
+	56: "0x6946a330a4e6089bF31eBB7F068f06fC6f7bd551",
+	1: "0x2c93D5A48E9962bC8192D26243A1D637Ea08d85c"
 };
 
 export const NFTAddress = {
@@ -212,6 +213,7 @@ export class Shoefy {
 		console.log(this._allowance2);
 		const stakers = await this._staking2Contract.methods.getStakeData(this._wallet.getAddress()).call();
 		const time = await this._staking2Contract.methods.getblocktime().call();
+		console.log(time, Date.now());
 		const fees = await this._staking2Contract.methods.totalFee().call() / 1;
 		const claims = await this._staking2Contract.methods.totalreward.call().call() / Math.pow(10, 18);
 
