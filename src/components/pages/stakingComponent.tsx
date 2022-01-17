@@ -256,7 +256,7 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 			if (accounts.length == 0) console.log("User is not logged in to MetaMask");
 			else {
 				const chainid = Number(await window.ethereum.request({ method: 'eth_chainId' }));
-				if (chainid === 56 || chainid === 4 || chainid === 97)
+				if (chainid === 56 || chainid === 4 || chainid === 97 || chainid === 1)
 					this.props.wallet.setChainId(Number(chainid));
 				this.connectWallet();
 			}
@@ -489,9 +489,10 @@ class StakingComponent extends BaseComponent<StakingProps & WithTranslation, Sta
 										this.props.wallet.setChainId(Number(e.target.value));
 										this.disconnectWallet();
 									}}>
-									<option value={4}>Rinkeby Testnet</option>
-                                    <option value={97}>BSC Testnet</option>
-                                    <option value={56}>BSC Mainnet</option>
+									{/* <option value={4}>Rinkeby Testnet</option> */}
+									<option value={1}>Ethereum Mainnet</option>
+									{/* <option value={97}>BSC Testnet</option> */}
+									<option value={56}>BSC Mainnet</option>
 								</select>
 							</li>
 							<li className="nav_letter">

@@ -141,7 +141,7 @@ class NFTStakingComponent extends BaseComponent<StakingProps & WithTranslation, 
 			if (accounts.length == 0) console.log("User is not logged in to MetaMask");
 			else {
 				const chainid = Number(await window.ethereum.request({ method: 'eth_chainId' }));
-				if (chainid === 56 || chainid === 4 || chainid === 97)
+				if (chainid === 56 || chainid === 4 || chainid === 97 || chainid === 1)
                     this.props.wallet.setChainId(Number(chainid));
                 this.connectWallet();
 			}
